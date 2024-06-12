@@ -1,0 +1,14 @@
+.imgHeader {
+    width: 100%;
+}
+
+.quoteBg {
+    background-color: #001c27;
+}
+
+.btnBooking {
+    background-color: #00b4d8;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+}
