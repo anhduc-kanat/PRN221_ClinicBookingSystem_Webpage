@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -22,6 +22,7 @@ import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
+const API_URL = process.env.REACT_APP_API_ROOT;
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
@@ -36,6 +37,21 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [setAppointments] = useState([]);
+  useEffect(() => {
+    const fetchAppointment = async () => {
+      try {
+        const response = await fetch(`${API_URL}/appointments`);
+        const data = await response.json();
+        setAppointments(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchAppointment();
+  },
+)
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
