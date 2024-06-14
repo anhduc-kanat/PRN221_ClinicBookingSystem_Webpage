@@ -22,7 +22,8 @@ import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-const API_URL = process.env.REACT_APP_API_ROOT;
+// const API_URL = process.env.REACT_APP_API_ROOT;
+const API_URL = 'https://api-prn.zouzoumanagement.xyz/api';
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
@@ -38,21 +39,22 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [setAppointments] = useState([]);
+  const [getAppointments, setAppointments] = useState([]);
+  const [, setPagingAppointment] = useState({});
   useEffect(() => {
     const fetchAppointment = async () => {
       try {
-        const response = await fetch(`${API_URL}/appointments`);
+        const response = await fetch(`${API_URL}/appointment/get-all-appointment`);
         const data = await response.json();
-        setAppointments(data);
+        setAppointments(data.data);
+        setPagingAppointment(data);
       } catch (error) {
         console.error(error);
       }
     }
     fetchAppointment();
   },
-)
-
+    [])
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
     if (id !== '') {
@@ -105,85 +107,118 @@ export default function UserPage() {
   const dataFiltered = applyFilter({
     inputData: users,
     comparator: getComparator(order, orderBy),
-    filterName,
-  });
 
-  const notFound = !dataFiltered.length && !!filterName;
+    filterName,
+  }); const notFound = !dataFiltered.length && !!filterName;
+
+
 
   return (
-    <Container>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+    <>
+      <Typography variant="h4">Users</Typography>
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+            New User
+          </Button>
+        </Stack>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
-        </Button>
-      </Stack>
+        <Card>
+          <UserTableToolbar
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+          />
 
-      <Card>
-        <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
-
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+          <Scrollbar>
+            <TableContainer sx={{ overflow: 'unset' }}>
+              <Table sx={{ minWidth: 800 }}>
+                <UserTableHead
+                  order={order}
+                  orderBy={orderBy}
+                  rowCount={users.length}
+                  numSelected={selected.length}
+                  onRequestSort={handleSort}
+                  onSelectAllClick={handleSelectAllClick}
+                  headLabel={[
+                    { id: 'id', label: 'ID' },
+                    { id: 'patientId', label: 'Patient ID' },
+                    { id: 'patientName', label: 'Patient Name' },
+                    { id: 'dentistId', label: 'Dentist ID' },
+                    { id: 'dentistName', label: 'Dentist Name' },
+                    { id: 'description', label: 'Description' },
+                    { id: 'date', label: 'Date' },
+                    { id: 'serviceName', label: 'Service Name' },
+                    { id: 'serviceType', label: 'Service Type' },
+                    { id: 'slotName', label: 'Slot Name' },
+                    { id: 'startAt', label: 'Start At' },
+                    { id: 'endAt', label: 'End At' },
+                    { id: 'isTreatment', label: 'Is Treatment?' },
+                    { id: 'status', label: 'Status' },
+                    { id: 'isApproved', label: 'Is Approved?' },
+                    { id: 'isPeriod', label: 'Is Period?' },
+                    { id: 'reExamUnit', label: 'Re-Exam Unit' },
+                    { id: 'reExamNumber', label: 'Re-Exam Number' },
+                    { id: 'feedBack', label: 'Feedback' },
+                  ]}
                 />
+                <TableBody>
+                  {getAppointments
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((appointment) => {
+                      // Transform the datetime strings to date-only strings
+                      const FullDateTimeData = new Date(appointment.date);
+                      const DateOnly = `${FullDateTimeData.getFullYear()}-${String(FullDateTimeData.getMonth() + 1).padStart(2, '0')}-${String(FullDateTimeData.getDate()).padStart(2, '0')}`;
 
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
+                      return (
+                        <UserTableRow
+                          id={appointment.id}
+                          date={DateOnly}
+                          isPeriod={appointment.isPeriod}
+                          reExamUnit={appointment.reExamUnit}
+                          reExamNumber={appointment.reExamNumber}
+                          isApproved={appointment.isApproved}
+                          status={appointment.status}
+                          description={appointment.description}
+                          feedBack={appointment.feedBack}
+                          isTreatment={appointment.isTreatment}
+                          dentistId={appointment.dentistId}
+                          dentistName={appointment.dentistName}
+                          patientId={appointment.patientId}
+                          patientName={appointment.patientName}
+                          serviceName={appointment.serviceName}
+                          serviceType={appointment.serviceType}
+                          slotName={appointment.slotName}
+                          startAt={appointment.startAt}
+                          endAt={appointment.endAt}
+                          selected={selected.indexOf(appointment.id) !== -1}
+                          handleClick={(event) => handleClick(event, appointment.id)}
+                        />
+                      );
+                    })}
 
-        <TablePagination
-          page={page}
-          component="div"
-          count={users.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Card>
-    </Container>
+                  <TableEmptyRows
+                    height={77}
+                    emptyRows={emptyRows(page, rowsPerPage, users.length)}
+                  />
+
+                  {notFound && <TableNoData query={filterName} />}
+                </TableBody>
+              </Table>
+
+            </TableContainer>
+          </Scrollbar>
+          <TablePagination
+            page={page}
+            component="div"
+            count={users.length}
+            rowsPerPage={rowsPerPage}
+            onPageChange={handleChangePage}
+            rowsPerPageOptions={[5, 10, 25]}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Card>
+      </Container>
+    </>
   );
 }

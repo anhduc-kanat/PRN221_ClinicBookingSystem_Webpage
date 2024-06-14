@@ -1,29 +1,38 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
+import { IconButton } from '@mui/material';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
   selected,
-  name,
-  avatarUrl,
-  company,
-  role,
-  isVerified,
+  id,
+  date,
+  isPeriod,
+  reExamUnit,
+  reExamNumber,
+  isApproved,
   status,
+  description,
+  feedBack,
+  isTreatment,
+  dentistId,
+  dentistName,
+  patientId,
+  patientName,
+  serviceName,
+  serviceType,
+  slotName,
+  startAt,
+  endAt,
   handleClick,
 }) {
   const [open, setOpen] = useState(null);
@@ -42,26 +51,25 @@ export default function UserTableRow({
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
-
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell>
-
-        <TableCell>{company}</TableCell>
-
-        <TableCell>{role}</TableCell>
-
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-        <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
-        </TableCell>
-
+        <TableCell>{id}</TableCell>
+        <TableCell>{patientId}</TableCell>
+        <TableCell>{patientName}</TableCell>
+        <TableCell>{dentistId}</TableCell>
+        <TableCell>{dentistName}</TableCell>
+        <TableCell>{description}</TableCell>
+        <TableCell>{date}</TableCell>
+        <TableCell>{serviceName}</TableCell>
+        <TableCell>{serviceType}</TableCell>
+        <TableCell>{slotName}</TableCell>
+        <TableCell>{startAt}</TableCell>
+        <TableCell>{endAt}</TableCell>
+        <TableCell>{isTreatment ? 'Yes' : 'No'}</TableCell>
+        <TableCell>{status}</TableCell>
+        <TableCell>{isApproved ? 'Yes' : 'No'}</TableCell>
+        <TableCell>{isPeriod ? 'Yes' : 'No'}</TableCell>
+        <TableCell>{reExamUnit}</TableCell>
+        <TableCell>{reExamNumber}</TableCell>
+        <TableCell>{feedBack}</TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -94,12 +102,25 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
+  id: PropTypes.number,
+  date: PropTypes.string,
+  isPeriod: PropTypes.bool,
+  reExamUnit: PropTypes.number,
+  reExamNumber: PropTypes.number,
+  isApproved: PropTypes.bool,
+  status: PropTypes.number,
+  description: PropTypes.string,
+  feedBack: PropTypes.string,
+  isTreatment: PropTypes.bool,
+  dentistId: PropTypes.number,
+  dentistName: PropTypes.string,
+  patientId: PropTypes.number,
+  patientName: PropTypes.string,
+  serviceName: PropTypes.string,
+  serviceType: PropTypes.number,
+  slotName: PropTypes.string,
+  startAt: PropTypes.string,
+  endAt: PropTypes.string,
   handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
-  name: PropTypes.any,
-  role: PropTypes.any,
-  selected: PropTypes.any,
-  status: PropTypes.string,
+  selected: PropTypes.bool,
 };
