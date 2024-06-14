@@ -7,12 +7,13 @@ import Backdrop from "../Elements/Backdrop";
 // Assets
 import LogoIcon from "../../assets/svg/Logo";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "antd";
 
 export default function TopNavbar() {
   const [y, setY] = useState(window.scrollY);
   const [sidebarOpen, toggleSidebar] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.addEventListener("scroll", () => setY(window.scrollY));
@@ -21,6 +22,15 @@ export default function TopNavbar() {
     };
   }, [y]);
 
+  const handleBookingbtn = () => {
+    const accessToken = localStorage.getItem("accessToken");
+    console.log("accessToken: ",accessToken);
+    if (accessToken === undefined || accessToken === null) {
+      navigate('/login');
+    } else {
+      navigate('/booking');
+    }
+  }
 
   return (
     <>
@@ -66,12 +76,12 @@ export default function TopNavbar() {
           </UlWrapper>
           <UlWrapperRight className="flexNullCenter">
             <li className="semiBold font15 pointer">
-              <a href="/" style={{ padding: "10px 30px 10px 0" }}>
+              <a href="/login" style={{ padding: "10px 30px 10px 0" }}>
                 Log in
               </a>
             </li>
             <li className="semiBold font15 pointer flexCenter">
-              <Button href="/booking" className="radius8 lightBg" style={{ fontWeight: "bold" ,padding: "10px 15px" }}>
+              <Button onClick={handleBookingbtn} href='/booking' className="radius8 lightBg" style={{ fontWeight: "bold" ,padding: "10px 15px" }}>
                 Booking
               </Button>
             </li>

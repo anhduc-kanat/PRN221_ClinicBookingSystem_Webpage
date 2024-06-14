@@ -11,120 +11,129 @@ import Calendar from 'react-calendar';
 import { Button } from 'antd';
 import axios from 'axios';
 import TopNavbar from 'src/components/Nav/TopNavbar';
-// const apiRoot = process.env.REACT_APP_API_ROOT;
+import { error } from 'src/theme/palette';
+const apiRoot = import.meta.env.VITE_API_ROOT;
+
 export default function BookingPage() {
+    //Service state
     const [showServices, setShowServices] = useState(true);
     const [selectedService, setSelectedService] = useState(null);
-
+    //Dentist state
     const [showDentists, setShowDentists] = useState(false);
     const [selectedDentist, setSelectedDentist] = useState(null);
     const [showDentistStage, setShowDentistStage] = useState(false);
-
+    //Calendar state
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [showCalendarStage, setShowCalendarStage] = useState(false);
-
+    //Slot state
     const [showSlots, setShowSlots] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [showSlotStage, setShowSlotStage] = useState(false);
-
+    //Profile state
     const [showProfiles, setShowProfiles] = useState(false);
     const [selectedProfile, setSelectedProfile] = useState(null);
     const [showProfilesStage, setShowProfilesStage] = useState(false);
-
+    //Data from api
     const [servicesData, setServicesData] = useState([]);
+    const [dentistsData, setDentistsData] = useState([]);
+    const [disabledDates, setDisabledDates] = useState([]);
+    const [slotsData, setSlotData] = useState([])
 
-    // useEffect(() => {
-    //     console.log("API Root: ", apiRoot);
-    //     axios.get(`${apiRoot}/service/get-all-services`)
-    //         .then(response => {
-    //             console.log("Response data: ", response.data)
-    //             if (response.data.statusCode === 200) {
-    //                 setServicesData(response.data.data);
-    //             } else {
-    //                 console.error('Failed to fetch services:', response.data.message);
-    //             }
-    //         }).catch(error => console.error('Error fetching services:', error));
-    // }, []);
+    // const [selectedDentistName, setSelectedDentistName] = useState([])
 
-    const serviceList = [
-        {
-            id: 1,
-            serviceName: 'Haircut',
-            description: 'Get your hair cut by our professional stylists.',
-            duration: '1 hour'
-        },
-        {
-            id: 2,
-            serviceName: 'Manicure',
-            description: 'Pamper yourself with a relaxing manicure session.',
-            duration: '45 minutes'
-        },
-        {
-            id: 3,
-            serviceName: 'Pedicure',
-            description: 'Enjoy a relaxing pedicure session.',
-            duration: '45 minutes'
-        },
-        {
-            id: 4,
-            serviceName: 'Massage',
-            description: 'Relax with a full body massage.',
-            duration: '1 hour'
-        },
-    ];
-    const dentistList = [
-        {
-            id: 1,
-            dentistName: 'Kalen',
-            description: 'Get your hair cut by our professional stylists.',
-            duration: '1 hour'
-        },
-        {
-            id: 2,
-            dentistName: 'Kanat',
-            description: 'Pamper yourself with a relaxing manicure session.',
-            duration: '45 minutes'
-        },
-        {
-            id: 3,
-            dentistName: 'Taboo',
-            description: 'Enjoy a relaxing pedicure session.',
-            duration: '45 minutes'
-        },
-        {
-            id: 4,
-            dentistName: 'Young',
-            description: 'Relax with a full body massage.',
-            duration: '1 hour'
-        },
-    ];
-    const slotList = [
-        {
-            id: 1,
-            slotName: 'Slot 1',
-            description: '7h30 - 7h45',
-            duration: '15 minutes'
-        },
-        {
-            id: 2,
-            slotName: 'Slot 2',
-            description: '7h45 - 8h',
-            duration: '15 minutes'
-        },
-        {
-            id: 3,
-            slotName: 'Slot 3',
-            description: '8h - 8h15',
-            duration: '15 minutes'
-        },
-        {
-            id: 4,
-            slotName: 'Slot 4',
-            description: '8h15-8h30',
-            duration: '15 minutes'
-        },
-    ];
+    useEffect(() => {
+
+        console.log("API Root: ", apiRoot);
+        axios.get(`${apiRoot}/service/get-all-services`)
+            .then(response => {
+                console.log("Response data: ", response.data)
+                if (response.data.statusCode === 200) {
+                    setServicesData(response.data.data);
+                } else {
+                    console.error('Failed to fetch services:', response.data.message);
+                }
+            }).catch(error => console.error('Error fetching services:', error));
+    }, []);
+
+    // const serviceList = [
+    //     {
+    //         id: 1,
+    //         serviceName: 'Haircut',
+    //         description: 'Get your hair cut by our professional stylists.',
+    //         duration: '1 hour'
+    //     },
+    //     {
+    //         id: 2,
+    //         serviceName: 'Manicure',
+    //         description: 'Pamper yourself with a relaxing manicure session.',
+    //         duration: '45 minutes'
+    //     },
+    //     {
+    //         id: 3,
+    //         serviceName: 'Pedicure',
+    //         description: 'Enjoy a relaxing pedicure session.',
+    //         duration: '45 minutes'
+    //     },
+    //     {
+    //         id: 4,
+    //         serviceName: 'Massage',
+    //         description: 'Relax with a full body massage.',
+    //         duration: '1 hour'
+    //     },
+    // ];
+    // const dentistList = [
+    //     {
+    //         id: 1,
+    //         dentistName: 'Kalen',
+    //         description: 'Get your hair cut by our professional stylists.',
+    //         duration: '1 hour'
+    //     },
+    //     {
+    //         id: 2,
+    //         dentistName: 'Kanat',
+    //         description: 'Pamper yourself with a relaxing manicure session.',
+    //         duration: '45 minutes'
+    //     },
+    //     {
+    //         id: 3,
+    //         dentistName: 'Taboo',
+    //         description: 'Enjoy a relaxing pedicure session.',
+    //         duration: '45 minutes'
+    //     },
+    //     {
+    //         id: 4,
+    //         dentistName: 'Young',
+    //         description: 'Relax with a full body massage.',
+    //         duration: '1 hour'
+    //     },
+    // ];
+    // const slotList = [
+    //     {
+    //         id: 1,
+    //         slotName: 'Slot 1',
+    //         description: '7h30 - 7h45',
+    //         duration: '15 minutes'
+    //     },
+    //     {
+    //         id: 2,
+    //         slotName: 'Slot 2',
+    //         description: '7h45 - 8h',
+    //         duration: '15 minutes'
+    //     },
+    //     {
+    //         id: 3,
+    //         slotName: 'Slot 3',
+    //         description: '8h - 8h15',
+    //         duration: '15 minutes'
+    //     },
+    //     {
+    //         id: 4,
+    //         slotName: 'Slot 4',
+    //         description: '8h15-8h30',
+    //         duration: '15 minutes'
+    //     },
+    // ];
 
     const profileList = [
         {
@@ -153,12 +162,12 @@ export default function BookingPage() {
         },
     ];
 
-    const disabledDates = [
-        new Date(2024, 5, 10),
-        new Date(2024, 5, 15),
-        new Date(2024, 5, 20),
-        // Add more dates as needed
-    ];
+    // const disabledDates = [
+    //     new Date(2024, 5, 10),
+    //     new Date(2024, 5, 15),
+    //     new Date(2024, 5, 20),
+    //     // Add more dates as needed
+    // ];
 
     const handleDisableDates = ({ date, view }) => {
         // Disable specific dates
@@ -173,10 +182,33 @@ export default function BookingPage() {
     };
 
     const handleDateChange = (date) => {
+        const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        console.log(formattedDate);
+        console.log(selectedDentist.id);
         setSelectedDate(date.toDateString());
         setShowCalendar(false)
         setShowSlotStage(true);
         setShowSlots(true);
+        axios.get(`${apiRoot}/slot/get-all-available-slots`, {
+            params: {
+                dentistId: selectedDentist.id,
+                date: formattedDate
+            }
+        })
+        .then(response => {
+            console.log("Available slots: ", response.data);
+            if (response.data.statusCode === 200) {
+                const formattedSlots = response.data.data.map(slot => ({
+                    ...slot,
+                    startAt: slot.startAt.slice(0, 5),
+                    endAt: slot.endAt.slice(0, 5)
+                }));
+                setSlotData(formattedSlots);
+            } else {
+                console.error('Failed to fetch slots:', response.data.message);
+            }
+        })
+        .catch(error => console.error('Error fetching slots:', error));
     };
 
 
@@ -185,6 +217,19 @@ export default function BookingPage() {
         setShowServices(false);
         setShowDentists(true)
         setShowDentistStage(true);
+        axios.get(`${apiRoot}/dentist/get-dentist-service`, {
+            params: {
+                serviceName: service
+            }
+        })
+            .then(response => {
+                console.log("Response data: ", response.data)
+                if (response.data.statusCode === 200) {
+                    setDentistsData(response.data.data);
+                } else {
+                    console.error('Failed to fetch dentists:', response.data.message);
+                }
+            }).catch(error => console.error('Error fetching dentists:', error));
     };
 
     const handleExtendService = () => {
@@ -207,6 +252,20 @@ export default function BookingPage() {
         setShowCalendarStage(true);
         setShowCalendar(true);
         setShowDentists(false);
+        axios.get(`${apiRoot}/dentist/get-date`, {
+            params: {
+                id: dentist.id
+            }
+        })
+            .then(response => {
+                console.log(response.data)
+                if (response.data.statusCode === 200) {
+                    const busyDates = response.data.data.map(dateString => new Date(dateString));
+                    setDisabledDates(busyDates);
+                } else {
+                    console.error('Failed to fetch disabled date:', response.data.message);
+                }
+            }).catch(error => console.error('Error fetching disabled date:', error));
     }
 
     const handleExtendDentists = () => {
@@ -243,7 +302,7 @@ export default function BookingPage() {
     }
 
     const handleSelectSlot = (slot) => {
-        setSelectedSlot(slot);
+        setSelectedSlot(slot.startAt + "-" + slot.endAt);
         setShowSlots(false);
         setShowProfilesStage(true);
         setShowProfiles(true);
@@ -276,7 +335,7 @@ export default function BookingPage() {
                             </div>
                             {showServices && (
                                 <div className='serviceList'>
-                                    {serviceList.map(service => (
+                                    {servicesData.map(service => (
                                         <div key={service.id} className='serviceItem' onClick={() => { handleSelectService(service.name) }}>
                                             <h4>{service.name}</h4>
                                             <p><strong>Description:</strong> {service.description}</p>
@@ -300,11 +359,10 @@ export default function BookingPage() {
                                 </div>
                                 {showDentists && (
                                     <div className='serviceList'>
-                                        {dentistList.map(dentist => (
-                                            <div key={dentist.id} className='serviceItem' onClick={() => { handleSelectDentist(dentist.dentistName) }}>
-                                                <h4>{dentist.dentistName}</h4>
-                                                <p><strong>Description:</strong> {dentist.description}</p>
-                                                <p><strong>Duration:</strong> {dentist.duration}</p>
+                                        {dentistsData.map(dentist => (
+                                            <div key={dentist.id} className='serviceItem' onClick={() => { handleSelectDentist(dentist) }}>
+                                                <h4>{dentist.lastName} {dentist.firstName}</h4>
+                                                <p><strong>Email: </strong>{dentist.email}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -343,12 +401,10 @@ export default function BookingPage() {
                                     />
                                 </div>
                                 {showSlots && (
-                                    <div className='serviceList'>
-                                        {slotList.map(slot => (
-                                            <div key={slot.id} className='serviceItem' onClick={() => { handleSelectSlot(slot.slotName) }}>
-                                                <h4>{slot.slotName}</h4>
-                                                <p><strong>Description:</strong> {slot.description}</p>
-                                                <p><strong>Duration:</strong> {slot.duration}</p>
+                                    <div className='slotList'>
+                                        {slotsData.map(slot => (
+                                            <div key={slot.id} className='slotItem' onClick={() => { handleSelectSlot(slot) }}>
+                                                <p>{slot.startAt}-{slot.endAt}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -389,7 +445,7 @@ export default function BookingPage() {
                             </div>
                             <div className='processRow'>
                                 <p className='processSmallTitle'>Dentist</p>
-                                <p className='processSmallContent'>{selectedDentist}</p>
+                                <p className='processSmallContent'>{selectedDentist? selectedDentist.lastName + " " + selectedDentist.firstName : null}</p>
                             </div>
                             <div className='processRow'>
                                 <p className='processSmallTitle'>Date</p>

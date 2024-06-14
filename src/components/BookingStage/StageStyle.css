@@ -37,6 +37,23 @@
     background-color: #f0f0f0;
 }
 
+.slotItem {
+  cursor: pointer;
+  border: 1px solid rgb(229 231 235);
+  border-radius: 1em;
+  padding: 10px;
+  width: 15%;
+  margin-right: 15px;
+  margin-top: 15px;
+  display: inline-block;
+  text-align: center;
+}
+
+.slotItem:hover {
+  background-color: #f0f0f0;
+}
+
+
 .calendar {
     width: 100%;
     margin: 0 auto;
