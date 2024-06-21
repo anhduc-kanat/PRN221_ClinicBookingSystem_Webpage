@@ -7,12 +7,14 @@
   "plugins": [
     "perfectionist",
     "unused-imports",
-    "prettier"
+    "prettier",
+    "jsx-a11y"
   ],
   "extends": [
     "airbnb",
     "airbnb/hooks",
-    "prettier"
+    "prettier",
+    "plugin:jsx-a11y/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -94,8 +96,6 @@
         "ignoreCase": false
       }
     ],
-    // unused-imports
-    // https://www.npmjs.com/package/eslint-plugin-unused-imports
     "unused-imports/no-unused-imports": 1,
     "unused-imports/no-unused-vars": [
       0,
@@ -106,8 +106,6 @@
         "argsIgnorePattern": "^_"
       }
     ],
-    // perfectionist
-    // https://eslint-plugin-perfectionist.azat.io/
     "perfectionist/sort-named-imports": [
       1,
       {
@@ -171,6 +169,8 @@
           "src/**"
         ]
       }
-    ]
+    ],
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off"
   }
 }

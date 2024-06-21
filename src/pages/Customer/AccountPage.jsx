@@ -1,16 +1,20 @@
 import { Helmet } from 'react-helmet-async';
 
-import { ProfileView} from 'src/sections/customer/view';
+import { AccountView } from 'src/sections/customer/view';
+
 
 // ----------------------------------------------------------------------
 
-export default function AppPage() {
+export default function AppointmentPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> User | Minimal UI </title>
       </Helmet>
-      <ProfileView/>
+
+      <AccountView />
+      
+
     </>
   );
 }
