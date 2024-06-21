@@ -25,7 +25,7 @@ export const login = createAsyncThunk(
         localStorage.setItem("role", role);
 
         const profile = await getRequest("/user/my-profile");
-        console.log(profile);
+        localStorage.setItem("profile", profile);
         
         // Trả về dữ liệu user từ phản hồi API
         return { ...response.data, role };

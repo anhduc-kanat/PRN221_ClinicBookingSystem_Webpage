@@ -64,12 +64,32 @@ export default function Router() {
       ],
     },
     {
+      path: 'dentist',
+      element: (
+        <DashboardLayoutDentist>
+          <ProtectedRoute allowedRoles={['DENTIST']}>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Outlet />
+            </Suspense>
+          </ProtectedRoute>
+        </DashboardLayoutDentist>
+      ),
+      children: [
+        { element: <DentistProfile />, index: true },
+        { path: 'patient', element: <PatientDentist /> },
+        { path: 'product', element: <ProductsPage /> },
+        { path: 'blog', element: <BlogPage /> },
+      ],
+    },
+    {
       path: 'customer',
       element: (
         <CustomerLayout>
-          <Suspense>
-            <Outlet />
-          </Suspense>
+          <ProtectedRoute allowedRoles={['CUSTOMER']}>
+            <Suspense>
+              <Outlet />
+            </Suspense>
+          </ProtectedRoute>
         </CustomerLayout>
       ),
       children: [
