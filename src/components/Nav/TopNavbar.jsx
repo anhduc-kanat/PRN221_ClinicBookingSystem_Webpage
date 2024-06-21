@@ -9,11 +9,13 @@ import LogoIcon from "../../assets/svg/Logo";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "antd";
+import AvatarDropdown from "./AvatarDropDown";
 
 export default function TopNavbar() {
   const [y, setY] = useState(window.scrollY);
   const [sidebarOpen, toggleSidebar] = useState(false);
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     window.addEventListener("scroll", () => setY(window.scrollY));
@@ -22,9 +24,15 @@ export default function TopNavbar() {
     };
   }, [y]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setIsLogin(true);
+    }
+  })
   const handleBookingbtn = () => {
     const accessToken = localStorage.getItem("accessToken");
-    console.log("accessToken: ",accessToken);
+    console.log("accessToken: ", accessToken);
     if (accessToken === undefined || accessToken === null) {
       navigate('/login');
     } else {
@@ -39,7 +47,7 @@ export default function TopNavbar() {
       <Wrapper className="flexCenter animate whiteBg" style={y > 100 ? { height: "60px" } : { height: "80px" }}>
         <NavInner className="container flexSpaceCenter">
           <Link className="pointer flexNullCenter" to="/" smooth={true}>
-            <img src="/logo.png" alt="logo"  width={60} height={60} viewBox="0 0 80 80" />
+            <img src="/logo.png" alt="logo" width={60} height={60} viewBox="0 0 80 80" />
             <h1 className="font20 extraBold">
               Dental Clinic
             </h1>
@@ -75,16 +83,18 @@ export default function TopNavbar() {
             </li>
           </UlWrapper>
           <UlWrapperRight className="flexNullCenter">
-            <li className="semiBold font15 pointer">
-              <a href="/login" style={{ padding: "10px 30px 10px 0" }}>
-                Log in
-              </a>
-            </li>
-            <li className="semiBold font15 pointer flexCenter">
-              <Button onClick={handleBookingbtn} href='/booking' className="radius8 lightBg" style={{ fontWeight: "bold" ,padding: "10px 15px" }}>
-                Booking
-              </Button>
-            </li>
+            <Button onClick={handleBookingbtn} href='/booking' className="radius8 lightBg" style={{ marginRight: "20px",fontWeight: "bold", padding: "10px 15px" }}>
+              Booking
+            </Button>
+            {isLogin ? <>
+              <AvatarDropdown />
+            </> :
+              <li className="semiBold font15 pointer">
+                <a href="/login" style={{ padding: "10px 30px 10px 0" }}>
+                  Log in
+                </a>
+              </li>
+            }
           </UlWrapperRight>
         </NavInner>
       </Wrapper>

@@ -19,6 +19,7 @@ import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -28,9 +29,17 @@ export default function LoginView() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const apiRoot = import.meta.env.VITE_API_ROOT;
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const handleLogin = () => {
+    axios.post(`${apiRoot}/authentication/login`, {
+      phoneNumber,
+      password
+    });
+    
   };
 
   const renderForm = (
@@ -66,7 +75,7 @@ export default function LoginView() {
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        onClick={handleLogin}
       >
         Login
       </LoadingButton>
