@@ -9,7 +9,7 @@ import Header from './header';
 
 
 // ----------------------------------------------------------------------
-export default function DashboardLayout({ children }) {
+export default function CustomerLayout({ children }) {
   const [openNav, setOpenNav] = useState(false);
 
   return (
@@ -31,6 +31,6 @@ export default function DashboardLayout({ children }) {
   );
 }
 
-DashboardLayout.propTypes = {
+CustomerLayout.propTypes = {
   children: PropTypes.node,
 };

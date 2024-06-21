@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
+import CustomerLayout from 'src/layouts/customer';
 import DashboardLayout from 'src/layouts/dashboard';
 import DashboardLayoutDentist from 'src/layouts/dentist';
 import ProtectedRoute from './ProtectedRoutes';
@@ -13,13 +14,19 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Page403 = lazy(() => import('src/pages/page-unauthorized'));
 export const HomePage = lazy(() => import('src/pages/HomePage'));
-export const BookingPage = lazy(() => import('src/pages/BookingPage'));
+export const BookingPage = lazy(() => import('src/pages/BookingPage'))
 export const Login = lazy(() => import('src/pages/Login/Login'));
 export const PatientDentist = lazy(() => import('src/pages/Dentist/PatientDentistPage'))
 export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'))
 
+export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/AppointmentPage'))
+export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'))
+export const AccountCustomerPage = lazy(() => import('src/pages/Customer/AccountPage'))
+export const PaymentHistoryPage = lazy(() => import('src/pages/Customer/PaymentHistoryPage'))
 
 // ----------------------------------------------------------------------
+
+
 
 export default function Router() {
   const routes = useRoutes([
@@ -57,27 +64,27 @@ export default function Router() {
       ],
     },
     {
-      path: 'dentist',
+      path: 'customer',
       element: (
-        <DashboardLayoutDentist>
-          <ProtectedRoute allowedRoles={['DENTIST']}>
-            <Suspense fallback={<div>Loading...</div>}>
-              <Outlet />
-            </Suspense>
-          </ProtectedRoute>
-        </DashboardLayoutDentist>
+        <CustomerLayout>
+          <Suspense>
+            <Outlet />
+          </Suspense>
+        </CustomerLayout>
       ),
       children: [
-        { element: <DentistProfile />, index: true },
-        { path: 'patient', element: <PatientDentist /> },
-        { path: 'product', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        { element: <IndexPage />, index: true },
+        { path: 'appointment', element: <AppointmentCustomerPage /> },
+        { path: 'profile', element: <ProfileCustomerPage /> },
+        { path: 'account', element: <AccountCustomerPage /> },
+        { path: 'payment-history', element: <PaymentHistoryPage /> },
+
       ],
     },
-    // {
-    //   path: 'login',     
-    //   element: <LoginPage />,
-    // },
+    {
+      path: 'login',
+      element: <LoginPage />,
+    },
     {
       path: '404',
       element: <Page404 />,

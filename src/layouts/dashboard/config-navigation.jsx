@@ -6,6 +6,8 @@ const icon = (name) => (
   <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
 );
 
+
+
 const navConfig = [
   {
     title: 'dashboard',
