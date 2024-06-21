@@ -3,6 +3,8 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import CustomerLayout from 'src/layouts/customer';
 import DashboardLayout from 'src/layouts/dashboard';
+import DashboardLayoutDentist from 'src/layouts/dentist';
+import ProtectedRoute from './ProtectedRoutes';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
@@ -10,14 +12,17 @@ export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const Page403 = lazy(() => import('src/pages/page-unauthorized'));
 export const HomePage = lazy(() => import('src/pages/HomePage'));
-export const BookingPage = lazy(() => import('src/pages/BookingPage'));
+export const BookingPage = lazy(() => import('src/pages/BookingPage'))
+export const Login = lazy(() => import('src/pages/Login/Login'));
+export const PatientDentist = lazy(() => import('src/pages/Dentist/PatientDentistPage'))
+export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'))
 
 export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/AppointmentPage'))
 export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'))
 export const AccountCustomerPage = lazy(() => import('src/pages/Customer/AccountPage'))
 export const PaymentHistoryPage = lazy(() => import('src/pages/Customer/PaymentHistoryPage'))
-
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +38,10 @@ export default function Router() {
       // ]
     },
     {
+      path: "login",
+      element: <Login />,
+    },
+    {
       path: "booking",
       element: (<BookingPage />)
     },
@@ -40,9 +49,11 @@ export default function Router() {
       path: 'admin',
       element: (
         <DashboardLayout>
-          <Suspense>
-            <Outlet />
-          </Suspense>
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Outlet />
+            </Suspense>
+          </ProtectedRoute>
         </DashboardLayout>
       ),
       children: [
@@ -77,6 +88,10 @@ export default function Router() {
     {
       path: '404',
       element: <Page404 />,
+    },
+    {
+      path: '403',
+      element: <Page403 />,
     },
     {
       path: '*',

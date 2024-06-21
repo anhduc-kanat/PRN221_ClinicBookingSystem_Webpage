@@ -24,3 +24,8 @@ src/setupTests.ts
 src/components
 src/pages
 src/sections
+src/services
+src/redux
+src/config
+src/app.jsx
+src/routes
