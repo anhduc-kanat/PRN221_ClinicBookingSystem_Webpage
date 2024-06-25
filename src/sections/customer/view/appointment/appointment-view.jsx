@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
 import AppointmentStatus from 'src/enum/appointment-enum';
+import GenderStatus from 'src/enum/gender-enum';
 
 
 
@@ -49,7 +50,7 @@ export default function AppointmentPage() {
     };
 
     const handleDeleteAppointment = async (id) => {
-        
+
     }
 
     return (
@@ -153,7 +154,15 @@ export default function AppointmentPage() {
                             </div>
                             <div className='flex justify-between mt-4'>
                                 <span className='text-lg'>Giới tính</span>
-                                <span className='text-lg'>{details.patientGender}</span>
+                                <span className='text-lg'>{details.patientGender === 0 ? (
+                                    <span>
+                                        {GenderStatus.MALE}
+                                    </span>
+                                ) : (
+                                    <span>
+                                        {GenderStatus.MALE}
+                                    </span>
+                                )}</span>
 
                             </div>
                             <div className='flex justify-between mt-4'>

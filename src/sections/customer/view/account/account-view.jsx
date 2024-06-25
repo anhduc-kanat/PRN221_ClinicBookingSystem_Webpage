@@ -9,7 +9,7 @@ import Input from '@mui/material/Input';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -17,6 +17,16 @@ import React, { useState } from 'react';
 
 export default function AccountPage() {
     const [showPassword, setShowPassword] = useState(false);
+    const [profile, setProfile] = useState({});
+
+
+
+    useEffect(() => {
+        const p = JSON.parse(localStorage.getItem("profile"));
+        setProfile(p);
+
+    });
+
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event) => {
@@ -33,22 +43,23 @@ export default function AccountPage() {
                     <div  >
                         <div className="flex justify-between mt-3 text-lg">
                             <span>Họ và tên</span>
-                            <span>a</span>
+                            <span>{profile.lastName} {profile.firstName}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
                             <span>Số điện thoại</span>
+                            <span>{profile.phoneNumber}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
                             <span>Ngày sinh</span>
-                        </div>
-                        <div className="flex justify-between mt-3 text-lg">
-                            <span>CMND/CCCD</span>
+                            <span>{profile.dateOfBirth}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
                             <span>Địa chỉ</span>
+                            <span>{profile.address}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
                             <span>Email</span>
+                            <span>{profile.email}</span>
                         </div>
                         <div className='mt-5 text-lg'>
                             <a className='text-primary cursor-pointer'>Thay đổi thông tin</a>
