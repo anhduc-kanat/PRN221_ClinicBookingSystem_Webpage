@@ -54,3 +54,7 @@ export function applyFilter({ inputData, comparator, filterName }) {
 
   return inputData;
 }
+
+export const cutString = (string, length) => {
+  return string.substring(0, length) + '...';
+};
