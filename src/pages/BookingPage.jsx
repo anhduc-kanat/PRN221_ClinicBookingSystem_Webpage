@@ -11,9 +11,8 @@ import Calendar from 'react-calendar';
 import { Button } from 'antd';
 import axios from 'axios';
 import TopNavbar from 'src/components/Nav/TopNavbar';
-import { error } from 'src/theme/palette';
 const apiRoot = import.meta.env.VITE_API_ROOT;
-
+const token = localStorage.getItem("accessToken");
 export default function BookingPage() {
     //Service state
     const [showServices, setShowServices] = useState(true);
@@ -38,10 +37,11 @@ export default function BookingPage() {
     const [servicesData, setServicesData] = useState([]);
     const [dentistsData, setDentistsData] = useState([]);
     const [disabledDates, setDisabledDates] = useState([]);
-    const [slotsData, setSlotData] = useState([])
+    const [slotsData, setSlotData] = useState([]);
+    const [profileData, setProfileData] = useState([]);
 
     // const [selectedDentistName, setSelectedDentistName] = useState([])
-
+    
     useEffect(() => {
 
         console.log("API Root: ", apiRoot);
@@ -55,85 +55,6 @@ export default function BookingPage() {
                 }
             }).catch(error => console.error('Error fetching services:', error));
     }, []);
-
-    // const serviceList = [
-    //     {
-    //         id: 1,
-    //         serviceName: 'Haircut',
-    //         description: 'Get your hair cut by our professional stylists.',
-    //         duration: '1 hour'
-    //     },
-    //     {
-    //         id: 2,
-    //         serviceName: 'Manicure',
-    //         description: 'Pamper yourself with a relaxing manicure session.',
-    //         duration: '45 minutes'
-    //     },
-    //     {
-    //         id: 3,
-    //         serviceName: 'Pedicure',
-    //         description: 'Enjoy a relaxing pedicure session.',
-    //         duration: '45 minutes'
-    //     },
-    //     {
-    //         id: 4,
-    //         serviceName: 'Massage',
-    //         description: 'Relax with a full body massage.',
-    //         duration: '1 hour'
-    //     },
-    // ];
-    // const dentistList = [
-    //     {
-    //         id: 1,
-    //         dentistName: 'Kalen',
-    //         description: 'Get your hair cut by our professional stylists.',
-    //         duration: '1 hour'
-    //     },
-    //     {
-    //         id: 2,
-    //         dentistName: 'Kanat',
-    //         description: 'Pamper yourself with a relaxing manicure session.',
-    //         duration: '45 minutes'
-    //     },
-    //     {
-    //         id: 3,
-    //         dentistName: 'Taboo',
-    //         description: 'Enjoy a relaxing pedicure session.',
-    //         duration: '45 minutes'
-    //     },
-    //     {
-    //         id: 4,
-    //         dentistName: 'Young',
-    //         description: 'Relax with a full body massage.',
-    //         duration: '1 hour'
-    //     },
-    // ];
-    // const slotList = [
-    //     {
-    //         id: 1,
-    //         slotName: 'Slot 1',
-    //         description: '7h30 - 7h45',
-    //         duration: '15 minutes'
-    //     },
-    //     {
-    //         id: 2,
-    //         slotName: 'Slot 2',
-    //         description: '7h45 - 8h',
-    //         duration: '15 minutes'
-    //     },
-    //     {
-    //         id: 3,
-    //         slotName: 'Slot 3',
-    //         description: '8h - 8h15',
-    //         duration: '15 minutes'
-    //     },
-    //     {
-    //         id: 4,
-    //         slotName: 'Slot 4',
-    //         description: '8h15-8h30',
-    //         duration: '15 minutes'
-    //     },
-    // ];
 
     const profileList = [
         {
@@ -162,19 +83,24 @@ export default function BookingPage() {
         },
     ];
 
-    // const disabledDates = [
-    //     new Date(2024, 5, 10),
-    //     new Date(2024, 5, 15),
-    //     new Date(2024, 5, 20),
+    // const disabledDatess = [
+    //     new Date(2024, 8, 19),
+    //     new Date(2024, 7, 15),
+    //     new Date(2024, 7, 20),
     //     // Add more dates as needed
     // ];
 
     const handleDisableDates = ({ date, view }) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (date < today) {
+          return true;
+        }    
         // Disable specific dates
         if (view === 'month') {
             return disabledDates.some(disabledDate =>
                 date.getFullYear() === disabledDate.getFullYear() &&
-                date.getMonth() === disabledDate.getMonth() &&
+                date.getMonth() === disabledDate.getMonth() - 1&&
                 date.getDate() === disabledDate.getDate()
             );
         }
@@ -182,10 +108,14 @@ export default function BookingPage() {
     };
 
     const handleDateChange = (date) => {
-        const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month (zero-based) needs +1
+        const day = date.getDate().toString().padStart(2, '0'); // Day of the month
+
+        const formattedDate = `${year}-${month}-${day}`;
         console.log(formattedDate);
         console.log(selectedDentist.id);
-        setSelectedDate(date.toDateString());
+        setSelectedDate(formattedDate);
         setShowCalendar(false)
         setShowSlotStage(true);
         setShowSlots(true);
@@ -195,20 +125,20 @@ export default function BookingPage() {
                 date: formattedDate
             }
         })
-        .then(response => {
-            console.log("Available slots: ", response.data);
-            if (response.data.statusCode === 200) {
-                const formattedSlots = response.data.data.map(slot => ({
-                    ...slot,
-                    startAt: slot.startAt.slice(0, 5),
-                    endAt: slot.endAt.slice(0, 5)
-                }));
-                setSlotData(formattedSlots);
-            } else {
-                console.error('Failed to fetch slots:', response.data.message);
-            }
-        })
-        .catch(error => console.error('Error fetching slots:', error));
+            .then(response => {
+                console.log("Available slots: ", response.data);
+                if (response.data.statusCode === 200) {
+                    const formattedSlots = response.data.data.map(slot => ({
+                        ...slot,
+                        startAt: slot.startAt.slice(0, 5),
+                        endAt: slot.endAt.slice(0, 5)
+                    }));
+                    setSlotData(formattedSlots);
+                } else {
+                    console.error('Failed to fetch slots:', response.data.message);
+                }
+            })
+            .catch(error => console.error('Error fetching slots:', error));
     };
 
 
@@ -219,7 +149,7 @@ export default function BookingPage() {
         setShowDentistStage(true);
         axios.get(`${apiRoot}/dentist/get-dentist-service`, {
             params: {
-                serviceName: service
+                serviceName: service.name
             }
         })
             .then(response => {
@@ -302,7 +232,19 @@ export default function BookingPage() {
     }
 
     const handleSelectSlot = (slot) => {
-        setSelectedSlot(slot.startAt + "-" + slot.endAt);
+        axios.get(`${apiRoot}/user-profile/get-profile-by-customer`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(res => {
+            console.log(res.data);
+            if (res.data.statusCode === 200) {
+                setProfileData(res.data.data);
+            } else {
+                console.log("Fail to fetch profile:", res.data.message);
+            }
+        }).catch(error => console.log("error fetch profile: ", error.message));
+        setSelectedSlot(slot);
         setShowSlots(false);
         setShowProfilesStage(true);
         setShowProfiles(true);
@@ -315,6 +257,25 @@ export default function BookingPage() {
     const handleSelectProfile = (profile) => {
         setSelectedProfile(profile);
         setShowProfiles(false);
+    }
+    const handleBookingAppointment = () => {
+        axios.post(`${apiRoot}/appointment/user-booking-appointment`, {
+            date: selectedDate,
+            serviceId: selectedService.id,
+            slotId: selectedSlot.id,
+            dentistId: selectedDentist.id,
+            patientId: selectedProfile.id
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(res => {
+            console.log("Booking data:", res.data);
+            const paymentUrl = res.data.data.url;
+            console.log(paymentUrl);
+            window.location.href = paymentUrl
+        }).catch(error => console.log("Error at Booking Appointment: ", error.message));
+
     }
 
     return (
@@ -336,7 +297,7 @@ export default function BookingPage() {
                             {showServices && (
                                 <div className='serviceList'>
                                     {servicesData.map(service => (
-                                        <div key={service.id} className='serviceItem' onClick={() => { handleSelectService(service.name) }}>
+                                        <div key={service.id} className='serviceItem' onClick={() => { handleSelectService(service) }}>
                                             <h4>{service.name}</h4>
                                             <p><strong>Description:</strong> {service.description}</p>
                                             <p><strong>Expected Duration:</strong> {service.expectedDurationInMinute} mins</p>
@@ -424,11 +385,11 @@ export default function BookingPage() {
                                 {/* <hr className='horizonalLine' /> */}
                                 {showProfiles && (
                                     <div className='serviceList'>
-                                        {profileList.map(profile => (
-                                            <div key={profile.id} className='serviceItem' onClick={() => { handleSelectProfile(profile.profileName) }}>
-                                                <h4>{profile.profileName}</h4>
-                                                <p><strong>Description:</strong> {profile.description}</p>
-                                                <p><strong>Duration:</strong> {[profile.relationship]}</p>
+                                        {profileData.map(profile => (
+                                            <div key={profile.id} className='serviceItem' onClick={() => { handleSelectProfile(profile) }}>
+                                                <h4>{profile.lastName} {profile.firstName}</h4>
+                                                <p><strong>Gender:</strong> {profile.gender}</p>
+                                                <p><strong>Date Of Birth:</strong> {[profile.dateOfBirth]}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -441,11 +402,11 @@ export default function BookingPage() {
                         <div className='processContainer'>
                             <div className='processRow'>
                                 <p className='processSmallTitle'>Service</p>
-                                <p className='processSmallContent'>{selectedService}</p>
+                                <p className='processSmallContent'>{selectedService ? selectedService.name : null}</p>
                             </div>
                             <div className='processRow'>
                                 <p className='processSmallTitle'>Dentist</p>
-                                <p className='processSmallContent'>{selectedDentist? selectedDentist.lastName + " " + selectedDentist.firstName : null}</p>
+                                <p className='processSmallContent'>{selectedDentist ? selectedDentist.lastName + " " + selectedDentist.firstName : null}</p>
                             </div>
                             <div className='processRow'>
                                 <p className='processSmallTitle'>Date</p>
@@ -453,14 +414,14 @@ export default function BookingPage() {
                             </div>
                             <div className='processRow'>
                                 <p className='processSmallTitle'>Slot</p>
-                                <p className='processSmallContent'>{selectedSlot}</p>
+                                <p className='processSmallContent'>{selectedSlot ? selectedSlot.startAt + "-" + selectedSlot.endAt : null}</p>
                             </div>
                             <div className='processRow'>
                                 <p className='processSmallTitle'>Profile</p>
-                                <p className='processSmallContent'>{selectedProfile}</p>
+                                <p className='processSmallContent'>{selectedProfile ? selectedProfile.lastName + " " + selectedProfile.firstName : null}</p>
                             </div>
                         </div>
-                        <Button type='primary' className='btnConfirmBooking'>Confirm Appointment</Button>
+                        <Button type='primary' onClick={handleBookingAppointment} className='btnConfirmBooking'>Confirm Appointment</Button>
                     </div>
                 </div>
                 <Footer className="footerBookingPage" />

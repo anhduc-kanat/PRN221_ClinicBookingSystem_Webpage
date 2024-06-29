@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -21,10 +21,24 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
-
+const apiRoot = import.meta.env.VITE_API_ROOT;
 export default function UserPage() {
+  const [appointment, setAppointment] = useState([]);
+  useEffect(() => {
+    axios.get(`${apiRoot}/appointment/get-all-appointment`)
+    .then(res => {
+      console.log("response data:", res.data);
+      if(res.data.statusCode === 200) {
+        setAppointment(res.data.data);
+      } else {
+        console.error('Failed to fetch appointments:', response.data.message);       
+      }
+    }).catch(error => console.log("Error at fetching appointments: ", error));
+  }, [])
+
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -87,7 +101,7 @@ export default function UserPage() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: appointment,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -136,10 +150,10 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
+                      name={row.date}
+                      role={row.serviceName}
+                      status={row.isTreatment}
+                      company={row.status}
                       avatarUrl={row.avatarUrl}
                       isVerified={row.isVerified}
                       selected={selected.indexOf(row.name) !== -1}

@@ -8,13 +8,13 @@ const icon = (name) => (
 
 const navConfig = [
   {
-    title: 'Profile',
+    title: 'Working Page',
     path: '/dentist',
     icon: icon('ic_analytics'),
   },
   {
-    title: 'Patient',
-    path: '/dentist/patient',
+    title: 'Profile',
+    path: '/dentist/profile',
     icon: icon('ic_user'),
   },
   {

@@ -16,13 +16,16 @@ export const Page403 = lazy(() => import('src/pages/page-unauthorized'));
 export const HomePage = lazy(() => import('src/pages/HomePage'));
 export const BookingPage = lazy(() => import('src/pages/BookingPage'))
 export const Login = lazy(() => import('src/pages/Login/Login'));
-export const PatientDentist = lazy(() => import('src/pages/Dentist/PatientDentistPage'))
+export const DentistWorkingPage = lazy(() => import('src/pages/Dentist/DentistWorkingPage'))
 export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'))
 
 export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/AppointmentPage'))
 export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'))
 export const AccountCustomerPage = lazy(() => import('src/pages/Customer/AccountPage'))
 export const PaymentHistoryPage = lazy(() => import('src/pages/Customer/PaymentHistoryPage'))
+
+export const SuccessBooking = lazy(() => import('src/pages/SuccessBooking'));
+export const FailBooking = lazy(() => import('src/pages/FailBooking'));
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +46,18 @@ export default function Router() {
     },
     {
       path: "booking",
-      element: (<BookingPage />)
+      element: (
+        <ProtectedRoute allowedRoles={['CUSTOMER']}>
+          <Suspense>
+            <Outlet />
+          </Suspense>
+        </ProtectedRoute>
+      ),
+      children: [
+        {element: <BookingPage />, index: true},
+        {path: 'success', element: <SuccessBooking />},
+        {path: 'fail', element: <FailBooking />}
+      ]
     },
     {
       path: 'admin',
@@ -75,8 +89,8 @@ export default function Router() {
         </DashboardLayoutDentist>
       ),
       children: [
-        { element: <DentistProfile />, index: true },
-        { path: 'patient', element: <PatientDentist /> },
+        { element: <DentistWorkingPage />, index: true },
+        { path: 'profile', element: <DentistProfile /> },
         { path: 'product', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
@@ -97,13 +111,8 @@ export default function Router() {
         { path: 'appointment', element: <AppointmentCustomerPage /> },
         { path: 'profile', element: <ProfileCustomerPage /> },
         { path: 'account', element: <AccountCustomerPage /> },
-        { path: 'payment-history', element: <PaymentHistoryPage /> },
-
+        { path: 'payment-history', element: <PaymentHistoryPage /> }
       ],
-    },
-    {
-      path: 'login',
-      element: <LoginPage />,
     },
     {
       path: '404',
