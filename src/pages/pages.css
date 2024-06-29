@@ -98,3 +98,111 @@
 .horizonalLine {
   border-top: 1px solid rgb(229 231 235);
 }
+
+
+.successfulContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.title-payment {
+  color: #4BD64E;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.subtitle-payment {
+  margin-bottom: 24px;
+}
+
+.img-payment-success {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 24px;
+}
+
+.button-payment-success {
+  background-color: #4BD64E;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.button-payment-success:hover {
+  background-color: #3aa440;
+}
+
+.failContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.title-payment-fail {
+  color: #F66264;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.subtitle-payment-fail {
+  margin-bottom: 24px;
+}
+
+.img-payment-fail {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 24px;
+}
+
+.button-payment-fail {
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.button-payment-fail:hover {
+  background-color: #e2555a;
+}
+
+@media (max-width: 600px) {
+  .title-payment {
+    font-size: 1.5rem;
+  }
+
+  .subtitle-payment {
+    font-size: 1rem;
+  }
+
+  .button-payment-success {
+    width: 100%;
+    padding: 12px;
+  }
+  
+  .title-payment-fail {
+    font-size: 1.5rem;
+  }
+
+  .subtitle-payment-fail {
+    font-size: 1rem;
+  }
+
+  .button-payment-fail {
+    width: 100%;
+    padding: 12px;
+  }
+}

@@ -41,6 +41,11 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    window.location.href = "/login";
+};
+
   return (
     <>
       <IconButton
@@ -105,7 +110,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={logout}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout

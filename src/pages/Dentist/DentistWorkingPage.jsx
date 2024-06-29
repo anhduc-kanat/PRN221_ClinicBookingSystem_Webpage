@@ -4,7 +4,7 @@ import { UserView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
 
-export default function PatientDentistPage() {
+export default function DentistWorkingPage() {
   return (
     <>
       <Helmet>
