@@ -29,6 +29,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3030,
+    hmr: {
+      protocol: 'wss', // or 'wss' if using HTTPS
+      host: 'clinic.zouzoumanagement.xyz',
+      port: 3031,
+    }
   },
   preview: {
     port: 3030,
