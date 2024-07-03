@@ -32,7 +32,7 @@ export default defineConfig({
     hmr: {
       protocol: 'wss', // or 'wss' if using HTTPS
       host: 'clinic.zouzoumanagement.xyz',
-      port: 3031,
+      port: 443,
     }
   },
   preview: {
