@@ -8,105 +8,79 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
+import Toolbar from '@mui/material/Toolbar';
+import axios from 'axios';
 
-import { users } from 'src/_mock/user';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import UserTableRow from '../user-table-row';
+import UserTableHead from '../user-table-head';
+import UserTableToolbar from '../user-table-toolbar';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
-import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
-import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
-import axios from 'axios';
+import './user-view.css'
+import { useNavigate } from 'react-router-dom';
+
 
 // ----------------------------------------------------------------------
 const apiRoot = import.meta.env.VITE_API_ROOT;
+const token = localStorage.getItem("accessToken");
 export default function UserPage() {
   const [appointment, setAppointment] = useState([]);
+  const [PageNumber, setPageNumber] = useState(1);
+  const [selected, setSelected] = useState([]);
+  const PageSize = 5;
+  const date = Date.now();
+  const navigate = useNavigate();
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const formattedCurrentDate = formatDate(Date.now());
+
   useEffect(() => {
-    axios.get(`${apiRoot}/appointment/get-all-appointment`)
-    .then(res => {
-      console.log("response data:", res.data);
-      if(res.data.statusCode === 200) {
-        setAppointment(res.data.data);
-      } else {
-        console.error('Failed to fetch appointments:', response.data.message);       
+    axios.get(`${apiRoot}/appointment/dentist-get-appointment-by-date`, {
+      params: {
+        PageNumber,
+        PageSize,
+        date: formattedCurrentDate
+      },
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-    }).catch(error => console.log("Error at fetching appointments: ", error));
+    },
+    )
+      .then(res => {
+        console.log(PageNumber);
+        console.log(PageSize);
+        console.log(formattedCurrentDate);
+        console.log("response data:", res.data);
+        if (res.data.statusCode === 200) {
+          setAppointment(res.data.data);
+        } else {
+          console.error('Failed to fetch appointments:', response.data.message);
+        }
+      }).catch(error => console.log("Error at fetching appointments: ", error));
   }, [])
 
-  const [page, setPage] = useState(0);
-
-  const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
-  const [orderBy, setOrderBy] = useState('name');
-
-  const [filterName, setFilterName] = useState('');
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleSort = (event, id) => {
-    const isAsc = orderBy === id && order === 'asc';
-    if (id !== '') {
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(id);
-    }
+  const handleRowClick = (id) => {
+    navigate(`/dentist/appointment/${id}`);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  const handlePreviousPage = () => {
+    setPageNumber(prevPageNumber => Math.max(prevPageNumber - 1, 1));
+  }
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
-
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
-
-  const dataFiltered = applyFilter({
-    inputData: appointment,
-    comparator: getComparator(order, orderBy),
-    filterName,
-  });
-
-  const notFound = !dataFiltered.length && !!filterName;
+  const handleNextPage = () => {
+    setPageNumber(prevPageNumber => prevPageNumber + 1);
+  }
 
   return (
     <Container>
@@ -119,68 +93,62 @@ export default function UserPage() {
       </Stack>
 
       <Card>
-        <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
+        <Toolbar
+          sx={{
+            height: 96,
+            display: 'flex',
+            justifyContent: 'space-between',
+            p: (theme) => theme.spacing(0, 1, 0, 3),
+          }}
+        >
+          <OutlinedInput
+            placeholder="Search user..."
+            startAdornment={
+              <InputAdornment position="start">
+                <Iconify
+                  icon="eva:search-fill"
+                  sx={{ color: 'text.disabled', width: 20, height: 20 }}
+                />
+              </InputAdornment>
+            }
+          />
+
+        </Toolbar>
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'accountName', label: 'Account Name', align: 'center' },
+                  { id: 'profileName', label: 'Profile Name', align: 'center' },
+                  { id: 'slot', label: 'Slot', align: 'center' },
+                  { id: 'date', label: 'Date', align: 'center' },
+                  { id: '', label: '' }
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                {appointment
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
-                      name={row.date}
-                      role={row.serviceName}
-                      status={row.isTreatment}
-                      company={row.status}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
+                      accountName={row.userAccountName}
+                      profileName={row.patientName}
+                      slot={row.startAt + "-" + row.endAt}
+                      date={row.date}
                       selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
+                      handleClick={() => handleRowClick(row.id)}
                     />
                   ))}
 
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
-                />
-
-                {notFound && <TableNoData query={filterName} />}
               </TableBody>
             </Table>
           </TableContainer>
         </Scrollbar>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={users.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        <div className='dentist-appointment-paging'>
+          <button className='paging-btn' onClick={handlePreviousPage}> Previous page </button>
+          <button className='paging-btn' onClick={handleNextPage}> Next page </button>
+        </div>
       </Card>
     </Container>
   );

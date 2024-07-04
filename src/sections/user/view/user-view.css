@@ -1,0 +1,16 @@
+.dentist-appointment-paging {
+    display: flex;
+    justify-content: end;
+    gap: 30px;
+    padding: 10px;
+    
+}
+
+.paging-btn {
+    font-size: 15px;
+}
+
+.paging-btn:hover {
+    color: #1890ff;
+    font-weight: bold;
+}

@@ -45,7 +45,7 @@ export default function BookingPage() {
     useEffect(() => {
 
         console.log("API Root: ", apiRoot);
-        axios.get(`${apiRoot}/service/get-all-services`)
+        axios.get(`${apiRoot}/service/get-all-exam-services`)
             .then(response => {
                 console.log("Response data: ", response.data)
                 if (response.data.statusCode === 200) {
@@ -55,41 +55,7 @@ export default function BookingPage() {
                 }
             }).catch(error => console.error('Error fetching services:', error));
     }, []);
-
-    const profileList = [
-        {
-            id: 1,
-            profileName: 'Ho Vo Nguyen Le',
-            description: 'Profile cua toi',
-            relationship: 'Toi'
-        },
-        {
-            id: 2,
-            profileName: 'HEHEEHE',
-            description: 'Profile cua me',
-            relationship: 'Mom'
-        },
-        {
-            id: 3,
-            profileName: 'hahaha',
-            description: 'Profile cua ba',
-            relationship: 'Dad'
-        },
-        {
-            id: 4,
-            profileName: 'Hihihi',
-            description: 'Profile cua em',
-            relationship: 'sister'
-        },
-    ];
-
-    // const disabledDatess = [
-    //     new Date(2024, 8, 19),
-    //     new Date(2024, 7, 15),
-    //     new Date(2024, 7, 20),
-    //     // Add more dates as needed
-    // ];
-
+    
     const handleDisableDates = ({ date, view }) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
