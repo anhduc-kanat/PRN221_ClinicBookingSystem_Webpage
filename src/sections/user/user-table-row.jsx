@@ -18,12 +18,10 @@ import Iconify from 'src/components/iconify';
 
 export default function UserTableRow({
   selected,
-  name,
-  avatarUrl,
-  company,
-  role,
-  isVerified,
-  status,
+  accountName,
+  profileName,
+  date,
+  slot,
   handleClick,
 }) {
   const [open, setOpen] = useState(null);
@@ -38,29 +36,23 @@ export default function UserTableRow({
 
   return (
     <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={handleClick} />
+      <TableRow hover tabIndex={-1} role="checkbox" onClick={handleClick} selected={selected}>
+
+        <TableCell component="th" scope="row" padding="none" align='center'>
+              {accountName}
         </TableCell>
 
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell>
+        <TableCell align='center'>{profileName}</TableCell>
 
-        <TableCell>{company}</TableCell>
+        <TableCell align='center'>{slot}</TableCell>
 
-        <TableCell>{role}</TableCell>
+        <TableCell align='center'>{date}</TableCell>
 
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
-
+        {/* <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+{/* 
         <TableCell>
           <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
-        </TableCell>
+        </TableCell> */}
 
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>

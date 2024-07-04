@@ -14,10 +14,11 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Page403 = lazy(() => import('src/pages/page-unauthorized'));
 export const HomePage = lazy(() => import('src/pages/HomePage'));
-export const BookingPage = lazy(() => import('src/pages/BookingPage'))
+export const BookingPage = lazy(() => import('src/pages/BookingPage'));
 export const Login = lazy(() => import('src/pages/Login/Login'));
-export const DentistWorkingPage = lazy(() => import('src/pages/Dentist/DentistWorkingPage'))
-export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'))
+export const DentistWorkingPage = lazy(() => import('src/pages/Dentist/DentistWorkingPage'));
+export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'));
+export const DentistAppointmentDetail = lazy(() => import('src/pages/Dentist/DentistAppointmentDetail'));
 
 export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/AppointmentPage'))
 export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'))
@@ -93,6 +94,7 @@ export default function Router() {
         { path: 'profile', element: <DentistProfile /> },
         { path: 'product', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: "appointment/:id", element: <DentistAppointmentDetail /> }
       ],
     },
     {
