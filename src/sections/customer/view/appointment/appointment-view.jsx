@@ -8,13 +8,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
 import AppointmentStatus from 'src/enum/appointment-enum';
 import GenderStatus from 'src/enum/gender-enum';
-import { getRequest } from 'src/services/api';
 import { fDate } from 'src/utils/format-time';
 
 
@@ -30,6 +30,8 @@ export default function AppointmentPage() {
     const [appointments, setAppointment] = useState([]);
     const [hover, setHover] = useState(null);
     const [open, setOpen] = React.useState(false);
+    const [pageTotal, setPageTotal] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -37,8 +39,8 @@ export default function AppointmentPage() {
         const token = localStorage.getItem("accessToken");
         axios.get(`${apiRoot}/appointment/user-get-appointment`, {
             params: {
-                pageNumber: 1,
-                pageSize: 10
+                pageNumber: currentPage,
+                pageSize: 3
             },
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -47,11 +49,12 @@ export default function AppointmentPage() {
             console.log("Response data: ", response.data)
             if (response.data.statusCode === 200) {
                 setAppointment(response.data.data);
+                setPageTotal(response.data.totalPages)
             } else {
                 console.error('Failed to fetch services:', response.data.message);
             }
         }).catch(error => console.error('Error fetching services:', error));
-    }, []);
+    }, [currentPage]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -61,6 +64,11 @@ export default function AppointmentPage() {
         setOpen(false);
     };
 
+    const handlePageChange = (event, page) => {
+
+        setCurrentPage(page);
+        console.log('Selected page:', page);
+    };
 
     const handleClick = (appointment) => {
         setDetails(appointment);
@@ -122,6 +130,14 @@ export default function AppointmentPage() {
                         </div>
                     ))}
                 </div>
+                <div className='mt-5'>
+                    <Stack spacing={2}>
+                        <Pagination count={pageTotal} color="primary"
+                            page={currentPage} // Current active page
+                            onChange={handlePageChange} />
+                    </Stack>
+                </div>
+
             </div>
             <div className="col-md-7 col-sm-7">
                 {details && (
@@ -252,12 +268,28 @@ export default function AppointmentPage() {
 
                         <div className='ps-8 pe-8 pb-8'>
                             <h4 className='font-bold text-xl '>Kết quả</h4>
-                            {details.result ? (
+                            {details.result && (
                                 <div key={details.result.id}>
-
+                                    <div>
+                                        {details.result.medicines.map(medicine => (
+                                            <div key={medicine.id}>
+                                                <p className='text-lg'>Medicine</p>
+                                                <div ></div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div>
+                                        {details.result.notes.map(note => (
+                                            <div key={note.id}>
+                                                <p className='text-lg'>Note</p>
+                                                <div></div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {details.result.medicines.length === 0 && details.result.notes.length === 0 && (
+                                        <img className='mx-auto max-w-full h-auto' src="/WaitingResult.png" alt="Placeholder" />
+                                    )}
                                 </div>
-                            ) : (
-                                <img src='./WaitingResult.jpg' />
                             )}
                         </div>
                         <div className='ms-8'>
@@ -266,10 +298,11 @@ export default function AppointmentPage() {
                             )}
                         </div>
                     </div>
-                )}
+                )
+                }
 
-            </div>
-        </div>
+            </div >
+        </div >
 
 
     )
