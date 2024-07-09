@@ -48,7 +48,30 @@
 
 .dentist-add-service-div {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dentist-add-service-select {
+    
+}
+
+.dentist-add-service-date-box {
+    display: flex;
+    flex-direction: column;
+    
+    margin-top: 10px;
+}
+
+.each-date-box {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.dentist-add-service-date-box Button{
+    margin-bottom: 10px;
 }
 
 @media (max-width: 768px) {

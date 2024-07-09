@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import './Dentists.css';
-import { Button, Select } from "antd";
+import { Button, DatePicker, Select } from "antd";
 import axios from "axios";
+import { CloseOutlined } from "@mui/icons-material";
 const apiRoot = import.meta.env.VITE_API_ROOT;
 const token = localStorage.getItem('accessToken');
 
@@ -10,8 +11,8 @@ export default function DentistAppointmentDetail() {
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
     const [services, setServices] = useState([]);
-    const [meetings, setMeetings] = useState([]);
     const [selectedService, setSelectedService] = useState(null);
+    const [dates, setDates] = useState([{ value: "" }]);
 
     useEffect(() => {
         axios.get(`${apiRoot}/appointment/get-appointment-by-id/${id}`)
@@ -36,7 +37,33 @@ export default function DentistAppointmentDetail() {
         console.log("Selected service ID:", serviceId);
     };
 
+    const handleDateChange = (date, dateString, index) => {
+        const newDates = [...dates];
+        newDates[index].value = dateString;
+        setDates(newDates);
+    };
+
+    const deleteDateField = (index) => {
+        const newDates = dates.filter((_, i) => i !== index);
+        setDates(newDates);
+    };
+
+    const addDateField = () => {
+        setDates([...dates, { value: "" }]);
+    };
+
     const handleAddService = () => {
+        if (!selectedService || dates.some(date => date.value === "")) {
+            console.log("No service selected or not all dates provided");
+            return;
+        }
+
+        const meetings = dates.map(date => ({ date: date.value }));
+
+        console.log(meetings);
+        console.log(selectedService);
+        console.log(id);
+
         axios.post(
             `${apiRoot}/appointment/dentist-add-service-into-appointment/${id}`,
             [
@@ -55,6 +82,8 @@ export default function DentistAppointmentDetail() {
             .then(res => {
                 console.log(res.data);
                 // Reload the appointment data
+                setSelectedService(null);
+                setDates([{ value: "" }]);
                 axios.get(`${apiRoot}/appointment/get-appointment-by-id/${id}`)
                     .then(res => {
                         setAppointment(res.data.data);
@@ -64,7 +93,7 @@ export default function DentistAppointmentDetail() {
             .catch(error => {
                 console.log("Error at Add Service: ", error.response.data);
             });
-    }
+    };
 
     return (
         <div>
@@ -115,23 +144,48 @@ export default function DentistAppointmentDetail() {
                                     ))}
                                     <h1 className="dentist-add-service-h1">Select a Service</h1>
                                     <div className="dentist-add-service-div">
-                                        <Select
-                                            placeholder="Select a service"
-                                            onChange={handleServiceChange}
-                                            style={{ width: 200 }}
-                                        >
-                                            {services.map(service => (
-                                                <Select.Option key={service.id} value={service.id}>
-                                                    {service.name}
-                                                </Select.Option>
-                                            ))}
-                                        </Select>
-                                        <Button type="primary" onClick={handleAddService}>Add Service</Button>
+                                        <div>
+                                            <div className="dentist-add-service-select">
+                                                <Select
+                                                    placeholder="Select a service"
+                                                    onChange={handleServiceChange}
+                                                    style={{ width: 200 }}
+                                                >
+                                                    {services.map(service => (
+                                                        <Select.Option key={service.id} value={service.id}>
+                                                            {service.name}
+                                                        </Select.Option>
+                                                    ))}
+                                                </Select>
+                                            </div>
+                                            <div className="dentist-add-service-date-box">
+                                                {selectedService && (
+                                                    <>
+                                                        {dates.map((date, index) => (
+                                                            <div key={index} className="each-date-box">
+                                                                <DatePicker
+                                                                    onChange={(date, dateString) => handleDateChange(date, dateString, index)}
+                                                                    style={{ margin: '0 0 10px', width: '100%' }}
+                                                                />
+                                                                <Button
+                                                                    type="primary"
+                                                                    danger
+                                                                    icon={<CloseOutlined />}
+                                                                    onClick={() => deleteDateField(index)}
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                        <Button type="primary" onClick={addDateField}>Add Another Date</Button>
+                                                        {dates.every(date => date.value !== "") && (
+                                                            <Button type="primary" onClick={handleAddService}>Add Service</Button>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                             </>
-
                         ) : (
                             <div className="dentist-service-note-none">
                                 <p>No service available.</p>
