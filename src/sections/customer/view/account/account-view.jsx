@@ -10,6 +10,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import React, { useState, useEffect } from 'react';
+import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
@@ -51,7 +52,7 @@ export default function AccountPage() {
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
                             <span>Ngày sinh</span>
-                            <span>{profile.dateOfBirth}</span>
+                            <span>{fDate(profile.dateOfBirth)}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
                             <span>Địa chỉ</span>
