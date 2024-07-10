@@ -5,9 +5,9 @@ import CustomerLayout from 'src/layouts/customer';
 import DashboardLayout from 'src/layouts/dashboard';
 import DashboardLayoutDentist from 'src/layouts/dentist';
 import ProtectedRoute from './ProtectedRoutes';
-import AboutPage from 'src/pages/AboutPage.jsx';
-import ServiceTeethPage from 'src/pages/ServiceTeethPage.jsx';
-import PriceList from 'src/pages/PriceList.jsx';
+// import AboutPage from 'src/pages/AboutPage.jsx';
+// import ServiceTeethPage from 'src/pages/ServiceTeethPage.jsx';
+// import PriceList from 'src/pages/PriceList.jsx';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
@@ -26,6 +26,10 @@ export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/App
 export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'));
 export const AccountCustomerPage = lazy(() => import('src/pages/Customer/AccountPage'));
 export const PaymentHistoryPage = lazy(() => import('src/pages/Customer/PaymentHistoryPage'));
+
+export const PriceList = lazy(() => import('src/pages/PriceList'));
+export const ServiceTeethPage = lazy(() => import('src/pages/ServiceTeethPage'));
+export const AboutPage = lazy(() => import('src/pages/AboutPage'))
 
 // ----------------------------------------------------------------------
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import ContactImg3 from 'src/assets/img/contact-3.png';
 import TopNavbar from 'src/components/Nav/TopNavbar.jsx';
 import Footer from 'src/components/Sections/Footer.jsx';
-import TableCustom from 'src/components/table/CustomTable.jsx';
+import TableCustom from 'src/components/table/CustomTable';
 import { cutString } from 'src/sections/user/utils.js';
 import { getRequest } from 'src/services/api.js';
 
@@ -103,7 +103,7 @@ function PriceList() {
           <div className="flex-[1] h-auto flex flex-col gap-5">
             <p className="text-center font40 extraBold">New paper</p>
             <div className="w-full h-screen overflow-hidden" ref={container}>
-              {/* scroll place */}
+              
               <div className="h-max w-full flex flex-col gap-[2rem] select-none">
                 {Array.from(new Array(10)).map((_, idx) => (
                   // card
@@ -127,7 +127,7 @@ function PriceList() {
                   // card
                 ))}
               </div>
-              {/* scroll place */}
+              
             </div>
           </div>
         ) : (
@@ -149,3 +149,4 @@ function PriceList() {
 }
 
 export default PriceList;
+
