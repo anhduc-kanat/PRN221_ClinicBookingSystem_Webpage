@@ -9,11 +9,11 @@ module.exports = {
         accent: '#F5A623', // Màu nhấn
         zinc: '#EEEDEB',
         binc: '#C7C8CC',
-        green:'#059212',
-        red:'#FF0000',
+        green: '#059212',
+        red: '#FF0000',
         blue: '#3DC2EC',
-        blue100: '#4B70F5'
-      }
+        blue100: '#4B70F5',
+      },
     },
   },
   variants: {

@@ -1,18 +1,17 @@
-import axios from "axios";
-import { axiosClientVer2 } from "../config/axiosInterceptor";
-import handleError from "../config/error";
+import axios from 'axios';
+import { axiosClientVer2 } from '../config/axiosInterceptor';
+import handleError from '../config/error';
 
 // const authToken = useSelector(accessTokenSelector)
-
 // [GET]
 const getRequest = async (url) => {
   try {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem('accessToken');
     const baseURL = import.meta.env.VITE_API_ROOT;
     const res = await axios.get(`${baseURL}${url}`, {
       headers: {
-       'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
     return res;
   } catch (error) {
@@ -55,9 +54,9 @@ const postRequestMultipartFormData = async (url, payload) => {
   try {
     const res = await axios.post(`${url}`, payload, {
       headers: {
-        Accept: "application/json, text/plain, */*",
-        ContentType: "multipart/form-data",
-        Authorization: sessionStorage.getItem("token"),
+        Accept: 'application/json, text/plain, */*',
+        ContentType: 'multipart/form-data',
+        Authorization: sessionStorage.getItem('token'),
       },
     });
     return res;
@@ -91,9 +90,9 @@ const putRequestMultipartFormData = async (url, payload) => {
   try {
     const res = await axios.put(`${url}`, payload, {
       headers: {
-        Accept: "application/json, text/plain, */*",
-        ContentType: "multipart/form-data",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Accept: 'application/json, text/plain, */*',
+        ContentType: 'multipart/form-data',
+        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
       },
     });
     return res;
