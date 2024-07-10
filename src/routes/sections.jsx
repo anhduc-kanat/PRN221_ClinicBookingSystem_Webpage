@@ -5,6 +5,9 @@ import CustomerLayout from 'src/layouts/customer';
 import DashboardLayout from 'src/layouts/dashboard';
 import DashboardLayoutDentist from 'src/layouts/dentist';
 import ProtectedRoute from './ProtectedRoutes';
+// import AboutPage from 'src/pages/AboutPage.jsx';
+// import ServiceTeethPage from 'src/pages/ServiceTeethPage.jsx';
+// import PriceList from 'src/pages/PriceList.jsx';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
@@ -20,29 +23,31 @@ export const DentistWorkingPage = lazy(() => import('src/pages/Dentist/DentistWo
 export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'));
 export const DentistAppointmentDetail = lazy(() => import('src/pages/Dentist/DentistAppointmentDetail'));
 
-export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/AppointmentPage'))
-export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'))
-export const AccountCustomerPage = lazy(() => import('src/pages/Customer/AccountPage'))
-export const PaymentHistoryPage = lazy(() => import('src/pages/Customer/PaymentHistoryPage'))
+export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/AppointmentPage'));
+export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'));
+export const AccountCustomerPage = lazy(() => import('src/pages/Customer/AccountPage'));
+export const PaymentHistoryPage = lazy(() => import('src/pages/Customer/PaymentHistoryPage'));
+
+export const PriceList = lazy(() => import('src/pages/PriceList'));
+export const ServiceTeethPage = lazy(() => import('src/pages/ServiceTeethPage'));
+export const AboutPage = lazy(() => import('src/pages/AboutPage'))
 
 export const SuccessBooking = lazy(() => import('src/pages/SuccessBooking'));
 export const FailBooking = lazy(() => import('src/pages/FailBooking'));
 
 // ----------------------------------------------------------------------
 
-
-
 export default function Router() {
   const routes = useRoutes([
     {
-      path: "",
-      element: (<HomePage />),
+      path: '',
+      element: <HomePage />,
       // children: [
       //   { path: 'booking', element: <BookingPage />}
       // ]
     },
     {
-      path: "login",
+      path: 'login',
       element: <Login />,
     },
     {
@@ -59,6 +64,18 @@ export default function Router() {
         {path: 'success', element: <SuccessBooking />},
         {path: 'fail', element: <FailBooking />}
       ]
+    },
+    {
+      path: 'service',
+      element: <ServiceTeethPage />,
+    },
+    {
+      path: 'about',
+      element: <AboutPage />,
+    },
+    {
+      path: 'price',
+      element: <PriceList />,
     },
     {
       path: 'admin',
