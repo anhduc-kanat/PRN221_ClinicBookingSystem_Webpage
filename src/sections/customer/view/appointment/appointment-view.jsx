@@ -82,7 +82,9 @@ export default function AppointmentPage() {
             case 3:
                 return <p className='text-green'>{AppointmentStatus.SCHEDULED}</p>;
             case 2:
-                return <p className='text-blue'>{AppointmentStatus.DONE}</p>;
+                return <p className='text-blue'>{AppointmentStatus.ONGOING}</p>;
+            case 1:
+                return <p className='text-green'>{AppointmentStatus.DONE}</p>;
             // Thêm các trường hợp khác nếu cần
             default:
                 return <p className='text-red'>{AppointmentStatus.CANCELLED}</p>;
@@ -267,22 +269,32 @@ export default function AppointmentPage() {
                         </div>
 
                         <div className='ps-8 pe-8 pb-8'>
-                            <h4 className='font-bold text-xl '>Kết quả</h4>
+                            <h4 className='font-bold text-xl mb-4'>Kết quả</h4>
                             {details.result && (
                                 <div key={details.result.id}>
                                     <div>
                                         {details.result.medicines.map(medicine => (
                                             <div key={medicine.id}>
-                                                <p className='text-lg'>Medicine</p>
+                                                <p className='text-lg'>Đơn thuốc</p>
                                                 <div ></div>
+
                                             </div>
                                         ))}
                                     </div>
                                     <div>
                                         {details.result.notes.map(note => (
                                             <div key={note.id}>
-                                                <p className='text-lg'>Note</p>
-                                                <div></div>
+                                                <div className='mb-4'>
+                                                    <p className='text-lg font-bold'>Ghi chú của bác sĩ {note.dentistName}</p>
+                                                    <div className='flex justify-between mt-4'>
+                                                        <span className='text-lg'>Nội dung</span>
+                                                        <span className='text-lg'>{note.content}</span>
+                                                    </div>
+                                                    <div className='flex justify-between mt-4'>
+                                                        <span className='text-lg'>Dịch vụ</span>
+                                                        <span className='text-lg ms-8'>{note.serviceName}</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

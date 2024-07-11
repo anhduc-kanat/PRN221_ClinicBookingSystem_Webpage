@@ -1,16 +1,20 @@
 import { Helmet } from 'react-helmet-async';
+import { DentistView } from 'src/sections/admin';
 
-import { AppView } from 'src/sections/overview/view';
+
 
 // ----------------------------------------------------------------------
 
-export default function AppPage() {
+export default function AppointmentPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> User | Minimal UI </title>
       </Helmet>
-      <AppView/>
+
+      <DentistView />
+      
+
     </>
   );
 }

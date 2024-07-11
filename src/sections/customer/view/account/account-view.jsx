@@ -14,13 +14,11 @@ import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
-
-
 export default function AccountPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [profile, setProfile] = useState({});
 
-
+  
 
     useEffect(() => {
         const p = JSON.parse(localStorage.getItem("profile"));

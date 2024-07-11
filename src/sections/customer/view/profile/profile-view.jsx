@@ -87,7 +87,6 @@ export default function ProfilePage() {
 
     return (
         <div className="row container">
-
             <div className="left col-md-5 col-sm-5 border-r-2 border-solid border-zinc">
                 <div className=''>
                     <form>
