@@ -1,7 +1,8 @@
 // ----------------------------------------------------------------------
+const storedProfile = JSON.parse(localStorage.getItem("profile")) || {};
 
 export const account = {
-  displayName: 'Jaydon Frankie',
-  email: 'demo@minimals.cc',
+  displayName: `${storedProfile.lastName + storedProfile.firstName}`,
+  email: `${storedProfile.email}`,
   photoURL: '/assets/images/avatars/avatar_25.jpg',
 };

@@ -5,6 +5,7 @@ import CustomerLayout from 'src/layouts/customer';
 import DashboardLayout from 'src/layouts/dashboard';
 import DashboardLayoutDentist from 'src/layouts/dentist';
 import ProtectedRoute from './ProtectedRoutes';
+import AdminLayout from 'src/layouts/admin';
 // import AboutPage from 'src/pages/AboutPage.jsx';
 // import ServiceTeethPage from 'src/pages/ServiceTeethPage.jsx';
 // import PriceList from 'src/pages/PriceList.jsx';
@@ -23,6 +24,7 @@ export const DentistWorkingPage = lazy(() => import('src/pages/Dentist/DentistWo
 export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'));
 export const DentistAppointmentDetail = lazy(() => import('src/pages/Dentist/DentistAppointmentDetail'));
 
+
 export const AppointmentCustomerPage = lazy(() => import('src/pages/Customer/AppointmentPage'));
 export const ProfileCustomerPage = lazy(() => import('src/pages/Customer/ProfilePage'));
 export const AccountCustomerPage = lazy(() => import('src/pages/Customer/AccountPage'));
@@ -35,6 +37,7 @@ export const AboutPage = lazy(() => import('src/pages/AboutPage'))
 export const SuccessBooking = lazy(() => import('src/pages/SuccessBooking'));
 export const FailBooking = lazy(() => import('src/pages/FailBooking'));
 
+export const DentistManagementPage = lazy(()=> import('src/pages/Admin/DentistManagementPage'))
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -80,17 +83,17 @@ export default function Router() {
     {
       path: 'admin',
       element: (
-        <DashboardLayout>
+        <AdminLayout>
           <ProtectedRoute allowedRoles={['ADMIN']}>
             <Suspense fallback={<div>Loading...</div>}>
               <Outlet />
             </Suspense>
           </ProtectedRoute>
-        </DashboardLayout>
+        </AdminLayout>
       ),
       children: [
         { element: <IndexPage />, index: true },
-        { path: 'user', element: <UserPage /> },
+        { path: 'dentist', element: <DentistManagementPage /> },
         { path: 'product', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
