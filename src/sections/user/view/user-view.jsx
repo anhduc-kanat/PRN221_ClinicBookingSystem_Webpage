@@ -28,9 +28,11 @@ import { useNavigate } from 'react-router-dom';
 const apiRoot = import.meta.env.VITE_API_ROOT;
 const token = localStorage.getItem("accessToken");
 export default function UserPage() {
-  const [dentist, setDentist] = useState([]);
+  const [appointment, setAppointment] = useState([]);
   const [selected, setSelected] = useState([]);
-  
+  const [PageNumber, setPageNumber] = useState(1);
+  const PageSize = 5;
+  const date = Date.now();
   const navigate = useNavigate();
 
   const formatDate = (date) => {
@@ -44,7 +46,12 @@ export default function UserPage() {
   const formattedCurrentDate = formatDate(Date.now());
 
   useEffect(() => {
-    axios.get(`${apiRoot}/dentist/get-dentists`, {} ,{
+    axios.get(`${apiRoot}/appointment/dentist-get-appointment-by-date`, {
+      params: {
+        PageNumber,
+        PageSize,
+        date: formattedCurrentDate
+      },  
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -75,7 +82,7 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Dentist Management </Typography>
+        <Typography variant="h4">Users</Typography>
 
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New Dentist
@@ -110,15 +117,15 @@ export default function UserPage() {
             <Table sx={{ minWidth: 800 }}>
               <UserTableHead
                 headLabel={[
-                  { id: 'firstName', label: 'First Name', align: 'center' },
-                  { id: 'lastName', label: 'Last Name', align: 'center' },
-                  { id: 'email', label: 'Email', align: 'center' },
-                  { id: 'phoneNumber', label: 'Phone Number', align: 'center' },
-                  { id: 'address', label: 'Address', align: 'center' }
+                  { id: 'accountName', label: 'Account Name', align: 'center' },
+                  { id: 'profileName', label: 'Profile Name', align: 'center' },
+                  { id: 'slot', label: 'Slot', align: 'center' },
+                  { id: 'date', label: 'Date', align: 'center' },
+                  { id: '', label: '' }
                 ]}
               />
               <TableBody>
-                {dentist
+                {appointment
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
