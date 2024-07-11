@@ -15,8 +15,18 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'user',
-    path: '/admin/user',
+    title: 'Dentist Management',
+    path: '/admin/dentist',
+    icon: icon('ic_user'),
+  },
+  {
+    title: 'Staff Management',
+    path: '/admin/staff',
+    icon: icon('ic_user'),
+  },
+  {
+    title: 'Service Management',
+    path: '/admin/service',
     icon: icon('ic_user'),
   },
   {
