@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import './Dentists.css';
 import { Button, DatePicker, Select, Spin } from "antd";
 import axios from "axios";
@@ -14,9 +14,11 @@ export default function DentistAppointmentDetail() {
     const [appointment, setAppointment] = useState(null);
     const [services, setServices] = useState([]);
     const [selectedService, setSelectedService] = useState(null);
+    const [appointmentServices, setAppointmentServices] = useState([]);
     const [dates, setDates] = useState([{ value: "" }]);
     const [note, setNote] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setIsLoading(true);
@@ -24,6 +26,7 @@ export default function DentistAppointmentDetail() {
             .then(res => {
                 console.log(res.data);
                 setAppointment(res.data.data);
+                setAppointmentServices(res.data.data.appointmentServices);
                 setIsLoading(false);
             })
             .catch(error => {
@@ -93,6 +96,7 @@ export default function DentistAppointmentDetail() {
                 axios.get(`${apiRoot}/appointment/get-appointment-by-id/${id}`)
                     .then(res => {
                         setAppointment(res.data.data);
+                        setAppointmentServices(res.data.data.appointmentServices);
                         setIsLoading(false);
                     })
                     .catch(error => {
@@ -107,20 +111,40 @@ export default function DentistAppointmentDetail() {
     };
 
     const handleAddNote = async () => {
-        const currentDate = new Date().toISOString().split('T')[0];
-        let appointmentBusinessServiceId = null;
+        const currentDate = new Date();
+        const localDate = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-        appointment.appointmentServices.forEach(service => {
-            service.meetings.forEach(meeting => {
+        let appointmentBusinessServiceId = null;
+        console.log(appointmentServices);
+        console.log(userProfile);
+        if (!appointment || !Array.isArray(appointment.appointmentServices)) {
+            console.log("appointment or appointment.appointmentServices is not defined or not an array");
+            return;
+        }
+
+        console.log("appointment.appointmentServices:", appointment.appointmentServices);
+
+        for (let i = 0; i < appointmentServices.length; i++) {
+            const service = appointmentServices[i];
+
+            if (!Array.isArray(service.meetings)) {
+                console.log(`Service ${i} has no meetings array`);
+                continue;
+            }
+
+            for (let j = 0; j < service.meetings.length; j++) {
+                const meeting = service.meetings[j];
+
                 if (
-                    meeting.date === currentDate &&
-                    meeting.status === 2 &&
+                    meeting.date === localDate &&
+                    (meeting.status === 7 || meeting.status === 2) &&
                     meeting.dentistId === userProfile.id
                 ) {
                     appointmentBusinessServiceId = service.id;
+                    console.log(`Matching service found: ${appointmentBusinessServiceId} and MeetingId: ${meeting.id}`);
                 }
-            });
-        });
+            }
+        }
 
         if (appointmentBusinessServiceId) {
             setIsLoading(true);
@@ -137,6 +161,7 @@ export default function DentistAppointmentDetail() {
                 setNote('');
                 const res = await axios.get(`${apiRoot}/appointment/get-appointment-by-id/${id}`);
                 setAppointment(res.data.data);
+                setAppointmentServices(res.data.data.appointmentServices);
             } catch (err) {
                 console.log("Error at fetch appointment detail: ", err.message);
             } finally {
@@ -146,6 +171,40 @@ export default function DentistAppointmentDetail() {
             // Handle case where no matching appointmentBusinessServiceId is found
         }
     };
+
+    const handleDone = () => {
+        const currentDate = new Date();
+        const localDate = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+        let meetingId = null;
+        console.log(appointmentServices)
+        for (let i = 0; i < appointmentServices.length; i++) {
+            const service = appointmentServices[i];
+            for (let j = 0; j < service.meetings.length; j++) {
+                const meeting = service.meetings[j];
+                if (
+                    meeting.date === localDate &&
+                    (meeting.status === 2 || meeting.status === 7) &&
+                    meeting.dentistId === userProfile.id
+                ) {
+                    meetingId = meeting.id
+                }
+            }
+        }
+
+        if (meetingId) {
+            axios.put(`${apiRoot}/meeting/update-meeting-into-done/${meetingId}`, null, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(res => {
+                console.log("Done result: ", res.data);
+                navigate('/dentist');
+
+            }).catch(err => {
+                console.log("Error at done meeting: ", err.message);
+            })
+        }
+    }
 
     return (
         <div>
@@ -166,7 +225,7 @@ export default function DentistAppointmentDetail() {
                                 <p>Date: {appointment.date}</p>
                             </div>
                             <div className="dentist-done-btn">
-                                <button>Done</button>
+                                <button onClick={handleDone}>Done</button>
                             </div>
                         </div>
                         <div className="dentist-appointment-detail-header">

@@ -15,6 +15,14 @@ const navConfig = [
     path: '/admin/dentist',
   },
   {
+    title: 'Service Management',
+    path: '/admin/service',
+  },
+  {
+    title: 'Slot Management',
+    path: '/admin/slot',
+  },
+  {
     title: 'Hồ sơ',
     path: '/customer/profile',
   },
