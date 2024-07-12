@@ -8,14 +8,13 @@
 .dentist-service-div,
 .dentist-result-div-none,
 .dentist-result-div {
-    width: 48%; 
-    border: 1px solid #ccc; 
-    padding: 20px; 
-    box-sizing: border-box; 
+    width: 48%;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.dentist-service-note-none
-.dentist-result-div-none {
+.dentist-service-note-none .dentist-result-div-none {
     text-align: center;
 }
 
@@ -53,14 +52,12 @@
     align-items: center;
 }
 
-.dentist-add-service-select {
-    
-}
+.dentist-add-service-select {}
 
 .dentist-add-service-date-box {
     display: flex;
     flex-direction: column;
-    
+
     margin-top: 10px;
 }
 
@@ -70,14 +67,86 @@
     gap: 10px;
 }
 
-.dentist-add-service-date-box Button{
+.dentist-add-service-date-box Button {
     margin-bottom: 10px;
+}
+
+/* Add this to your CSS file */
+.textarea-description {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
+
+.result-patient-name {
+    margin-bottom: 5px;
+}
+
+.note-dentist-service {
+    color: #888;
+    font-size: 0.90rem;
+}
+
+.note-content {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: #eee;
+}
+
+.note-each-div {
+    margin-bottom: 10px;
+}
+
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 1000;
+}
+
+.blur {
+    filter: blur(5px);
+    pointer-events: none;
+    user-select: none;
+}
+
+.dentist-first-div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dentist-done-btn button {
+    background-color: #25e852;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dentist-done-btn button:hover {
+    background-color: #26b845; 
 }
 
 @media (max-width: 768px) {
     .dentist-appointment-detail-header {
         flex-direction: column;
     }
+
     .dentist-service-div,
     .dentist-result-div {
         width: 100%;

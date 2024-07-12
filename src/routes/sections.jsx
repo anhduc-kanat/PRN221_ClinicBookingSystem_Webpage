@@ -6,13 +6,10 @@ import DashboardLayout from 'src/layouts/dashboard';
 import DashboardLayoutDentist from 'src/layouts/dentist';
 import ProtectedRoute from './ProtectedRoutes';
 import AdminLayout from 'src/layouts/admin';
-// import AboutPage from 'src/pages/AboutPage.jsx';
-// import ServiceTeethPage from 'src/pages/ServiceTeethPage.jsx';
-// import PriceList from 'src/pages/PriceList.jsx';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
-export const BlogPage = lazy(() => import('src/pages/blog'));
-export const UserPage = lazy(() => import('src/pages/user'));
+export const BlogPage = lazy(() => import('src/pages/Admin/blog'));
+export const UserPage = lazy(() => import('src/pages/Admin/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));

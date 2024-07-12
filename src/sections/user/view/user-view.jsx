@@ -29,8 +29,8 @@ const apiRoot = import.meta.env.VITE_API_ROOT;
 const token = localStorage.getItem("accessToken");
 export default function UserPage() {
   const [appointment, setAppointment] = useState([]);
-  const [PageNumber, setPageNumber] = useState(1);
   const [selected, setSelected] = useState([]);
+  const [PageNumber, setPageNumber] = useState(1);
   const PageSize = 5;
   const date = Date.now();
   const navigate = useNavigate();
@@ -51,16 +51,13 @@ export default function UserPage() {
         PageNumber,
         PageSize,
         date: formattedCurrentDate
-      },
+      },  
       headers: {
         'Authorization': `Bearer ${token}`
       }
     },
     )
       .then(res => {
-        console.log(PageNumber);
-        console.log(PageSize);
-        console.log(formattedCurrentDate);
         console.log("response data:", res.data);
         if (res.data.statusCode === 200) {
           setAppointment(res.data.data);
@@ -88,7 +85,7 @@ export default function UserPage() {
         <Typography variant="h4">Users</Typography>
 
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
+          New Dentist
         </Button>
       </Stack>
 
