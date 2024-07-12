@@ -36,24 +36,24 @@ export default function AccountPage() {
         <div className="row container">
             <div className="left col-md-6 col-sm-6 border-r-2 border-solid border-zinc">
                 <div>
-                    <h2 className='font-bold text-xl mb-5'>Thông tin tài khoản</h2>
+                    <h2 className='font-bold text-xl mb-5'>Account Information</h2>
                 </div>
                 <div className='appointment pe-10 '>
                     <div  >
                         <div className="flex justify-between mt-3 text-lg">
-                            <span>Họ và tên</span>
+                            <span>Name</span>
                             <span>{profile.lastName} {profile.firstName}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
-                            <span>Số điện thoại</span>
+                            <span>Phone Number</span>
                             <span>{profile.phoneNumber}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
-                            <span>Ngày sinh</span>
+                            <span>Date of Birth</span>
                             <span>{fDate(profile.dateOfBirth)}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
-                            <span>Địa chỉ</span>
+                            <span>Address</span>
                             <span>{profile.address}</span>
                         </div>
                         <div className="flex justify-between mt-3 text-lg">
@@ -61,7 +61,7 @@ export default function AccountPage() {
                             <span>{profile.email}</span>
                         </div>
                         <div className='mt-5 text-lg'>
-                            <a className='text-primary cursor-pointer'>Thay đổi thông tin</a>
+                            <a className='text-primary cursor-pointer'>Change Information</a>
                         </div>
                     </div>
                 </div>
@@ -69,9 +69,9 @@ export default function AccountPage() {
             </div>
             <div className="col-md-6 col-sm-6">
                 <div className='appointment-detail-up'>
-                    <h4 className='font-bold text-xl mb-5'>Thay đổi mật khẩu</h4>
+                    <h4 className='font-bold text-xl mb-5'>Change passsword</h4>
                     <div>
-                        <p className='text-lg'>Mật khẩu cũ <span className='text-red'>*</span></p>
+                        <p className='text-lg'>Old password <span className='text-red'>*</span></p>
                     </div>
                     <div>
                         <FormControl sx={{ m: 0, width: '50ch' }} variant="standard">
@@ -94,7 +94,7 @@ export default function AccountPage() {
                         </FormControl>
                     </div>
                     <div className='mt-5'>
-                        <p className='text-lg'>Mật khẩu mới <span className='text-red'>*</span></p>
+                        <p className='text-lg'>New password <span className='text-red'>*</span></p>
                     </div>
                     <div >
                     <FormControl sx={{ m: 0, width: '50ch' }} variant="standard">
@@ -121,7 +121,7 @@ export default function AccountPage() {
                 </div>
                 <div className='flex justify-end mt-8'>
                     <div >
-                        <Button type="primary">Thay đổi</Button>
+                        <Button type="primary">Change</Button>
                     </div>
                 </div>
             </div>

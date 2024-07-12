@@ -1,17 +1,19 @@
 import { Helmet } from 'react-helmet-async';
+import { SlotManagementView } from 'src/sections/admin';
 
-import { UserView } from 'src/sections/user/view';
+
+
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function SlotManagementPage() {
   return (
     <>
       <Helmet>
         <title> User | Minimal UI </title>
       </Helmet>
 
-      <UserView />
+      <SlotManagementView />
     </>
   );
 }

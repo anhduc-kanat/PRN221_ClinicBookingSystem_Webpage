@@ -134,7 +134,7 @@ export default function ProfileForm({ updateProfileData, fetchDetails }) {
     return (
 
         <Form variant="filled" style={{ maxWidth: 600 }} form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}>
-            <h4 className='font-bold text-xl mb-5'>Thông tin cơ bản</h4>
+            <h4 className='font-bold text-xl mb-5'>Information</h4>
             {showAlert && (
                 <Alert className='mb-5' message={alertMessage} type="success" showIcon onClose={() => setShowAlert(false)} />
             )}
@@ -173,8 +173,8 @@ export default function ProfileForm({ updateProfileData, fetchDetails }) {
                     <Form.Item label={<span className="text-lg">Gender</span>} name="gender" rules={[{ required: true, message: 'Please input!' }]}>
                         <Select className="text-md"
                             options={[
-                                { value: 0, label: 'Nam' },
-                                { value: 1, label: 'Nữ' }
+                                { value: 0, label: 'Man' },
+                                { value: 1, label: 'Woman' }
                             ]} style={{ width: '50%' }} />
                     </Form.Item>
 
@@ -192,10 +192,10 @@ export default function ProfileForm({ updateProfileData, fetchDetails }) {
                         rules={[{ required: true, message: 'Please input!' }]}
                     >
                         <Radio.Group name="radiogroup" defaultValue={1}>
-                            <Radio className='text-lg' value={"Cha"}>Cha</Radio>
-                            <Radio className='text-lg' value={"Mẹ"}>Mẹ</Radio>
-                            <Radio className='text-lg' value={"Con"}>Con</Radio>
-                            <Radio className='text-lg' value={"Anh chị em"}>Anh chị em</Radio>
+                            <Radio className='text-lg' value={"Dad"}>Dad</Radio>
+                            <Radio className='text-lg' value={"Mom"}>Mom</Radio>
+                            <Radio className='text-lg' value={"Son"}>Son</Radio>
+                            <Radio className='text-lg' value={"Sibling"}>Sibling</Radio>
                         </Radio.Group>
                     </Form.Item>
 

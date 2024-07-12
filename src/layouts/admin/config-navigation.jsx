@@ -7,25 +7,25 @@
 
 const navConfig = [
   {
-    title: 'Thống kê',
+    title: 'Dashboard',
     path: '/admin',
   },
   {
-    title: 'Quản lý bác sĩ',
+    title: 'Dentist management',
     path: '/admin/dentist',
   },
   {
-    title: 'Hồ sơ',
-    path: '/customer/profile',
+    title: 'Staff management',
+    path: '/admin/staff',
   },
   {
-    title: 'Tài khoản',
-    path: '/customer/account',
+    title: 'Service Management',
+    path: '/admin/service',
   },
   {
-    title: 'Lịch sử thanh toán',
-    path: '/customer/payment-history',
-  }
+    title: 'Slot Management',
+    path: '/admin/slot',
+  },
 ];
 
 export default navConfig;
