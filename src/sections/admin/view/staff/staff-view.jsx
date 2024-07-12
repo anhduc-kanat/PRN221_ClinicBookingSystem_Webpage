@@ -5,16 +5,14 @@ import moment from 'moment';
 import { fDate } from 'src/utils/format-time';
 const apiRoot = import.meta.env.VITE_API_ROOT;
 
-export default function DentistPage() {
-    const [dentists, setDentists] = useState([]);
+export default function StaffPage() {
+    const [staffs, setStaffs] = useState([]);
     const token = localStorage.getItem("accessToken");
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [isUpdate, setIsUpdate] = useState(false);
     const [isModal, setIsModal] = useState(false);
-    const [dentistUpdate, setDentistUpdate] = useState(null);
-    const [services, setSetvices] = useState([]);
-    const [serviceNames, setServiceNames] = useState([]);
+    const [staffUpdate, setStaffUpdate] = useState(null);
     const [form] = Form.useForm();
     const initialValues = {
         firstName: '',
@@ -23,7 +21,7 @@ export default function DentistPage() {
         email: '',
         phoneNumber: '',
         dateOfBirth: null,
-        services: []
+        services: ""
     };
 
     useEffect(() => {
@@ -31,14 +29,14 @@ export default function DentistPage() {
     }, []);
 
     const fetchDetails = async () => {
-        axios.get(`${apiRoot}/dentist/get-dentists`, {
+        axios.get(`${apiRoot}/staff/get-staffs`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
                 if (response.data.statusCode === 200) {
-                    setDentists(response.data.data);
+                    setStaffs(response.data.data);
                 } else {
                     console.error('Failed to fetch services:', response.data.message);
                 }
@@ -46,17 +44,15 @@ export default function DentistPage() {
     };
 
     useEffect(() => {
-        if (dentistUpdate && dentistUpdate.services) {
-            const defaultServiceIds = dentistUpdate.services.map(service => service.id);
+        if (staffUpdate) {
             form.setFieldsValue({
-                ...dentistUpdate,
-                dateOfBirth: dentistUpdate.dateOfBirth ? moment(dentistUpdate.dateOfBirth) : null,
-                service: defaultServiceIds
+                ...staffUpdate,
+                dateOfBirth: staffUpdate.dateOfBirth ? moment(staffUpdate.dateOfBirth) : null
             });
         } else {
             form.resetFields();
         }
-    }, [dentistUpdate]);
+    }, [staffUpdate]);
 
     const columns = [
         {
@@ -102,14 +98,14 @@ export default function DentistPage() {
         }
     ];
 
-    const data = dentists.map(dentist => ({
-        ...dentist,
-        name: `${dentist.lastName} ${dentist.firstName}`,
-        date: fDate(dentist.dateOfBirth)
+    const data =staffs.map(staff => ({
+        ...staff,
+        name: `${staff.lastName} ${staff.firstName}`,
+        date: fDate(staff.dateOfBirth)
     }));
 
     const handleDelete = (id) => {
-        axios.delete(`${apiRoot}/dentist/delete-dentist/${id}`, {
+        axios.delete(`${apiRoot}/staff/delete-staff/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -123,21 +119,16 @@ export default function DentistPage() {
                     }, 3000);
                     fetchDetails();
                 } else {
-                    console.error('Failed to fetch services:', response.data.message);
+                    console.error('Failed to delete staff:', response.data.message);
                 }
-            }).catch(error => console.error('Error fetching services:', error));
+            }).catch(error => console.error('Error deleting staff:', error));
     };
 
     const handleUpdate = () => {
         setIsModal(false);
         form.validateFields().then(values => {
-            const updatedDentist = { 
-                ...dentistUpdate,
-                 ...values, 
-                servicesId: values.service
-             };
-            console.log(updatedDentist)
-            axios.put(`${apiRoot}/dentist/update-dentist/${updatedDentist.id}`, updatedDentist, {
+            const updatedDentist = { ...staffUpdate, ...values };
+            axios.put(`${apiRoot}/staff/update-staff/${updatedDentist.id}`, updatedDentist, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -149,14 +140,14 @@ export default function DentistPage() {
                         setTimeout(() => {
                             setShowAlert(false);
                         }, 3000);
-                        setDentistUpdate(null)
+                        setStaffUpdate(null)
                         fetchDetails();
                     } else {
-                        console.error('Failed to update dentist:', response.data.message);
+                        console.error('Failed to update staff:', response.data.message);
                     }
-                }).catch(error => console.error('Error updating dentist:', error));
+                }).catch(error => console.error('Error updating staff:', error));
         })
-            .catch(error => console.error('Error updating dentist:', error));
+            .catch(error => console.error('Error updating staff:', error));
     };
 
 
@@ -171,66 +162,39 @@ export default function DentistPage() {
             }
             const addDentist = { 
                 ...values,
-                dateOfBirth: formattedDateOfBirth,
-                servicesId: values.service
-                };
+                dateOfBirth: formattedDateOfBirth
+                 };
             console.log(addDentist)
-            axios.post(`${apiRoot}/dentist/create-dentist`, addDentist, {
+            axios.post(`${apiRoot}/staff/create-staff`, addDentist, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
-            }).then(response => {
+            })
+                .then(response => {
                     if (response.data.statusCode === 201) {
                         setAlertMessage('Account add successfully');
                         setShowAlert(true);
                         setTimeout(() => {
                             setShowAlert(false);
                         }, 3000);
-                        setDentistUpdate(null)
                         fetchDetails();
                     } else {
-                        console.error('Failed to add dentist:', response.data.message);
+                        console.error('Failed to add staff:', response.data.message);
                     }
-                }).catch(error => console.error('Error add dentist:', error));
+                }).catch(error => console.error('Error adding staff:', error));
         });
     }
-
-
-    const fetchService = () => {
-        axios.get(`${apiRoot}/service/get-all-services`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                if (response.data.statusCode === 200) {
-                    const serviceOption = response.data.data.map(service => ({
-                        label: service.name,
-                        value: service.id
-                    }))
-                    setSetvices(serviceOption)
-                } else {
-                    console.error('Failed to fetch service:', response.data.message);
-                }
-            }).catch(error => console.error('Error fetch service:', error));
-    };
 
     const handleCancel = () => {
         setIsModal(false);
     };
 
     const showModal = (record) => {
-        setDentistUpdate(record || initialValues);
+        setStaffUpdate(record || initialValues);
         if (record === null) {
-            fetchService()
             setIsUpdate(false)
-           
         } else {
-            console.log(dentistUpdate)
-            fetchService()
             setIsUpdate(true)
-            // const defaultServiceNames = dentistUpdate.services.map(service => service.name);
-            // setServiceNames(defaultServiceNames)
         }
         setIsModal(true);
     };
@@ -253,7 +217,7 @@ export default function DentistPage() {
             )}
             <div>
                 <div className='mb-4 '>
-                    <Button className='p-5' onClick={() => showModal(null)} type='primary'>Add dentist account</Button>
+                    <Button className='p-5' onClick={() => showModal(null)} type='primary'>Add staff account</Button>
                 </div>
                 <Table
                     columns={columns}
@@ -315,7 +279,7 @@ export default function DentistPage() {
                             },
                         ]}
                     >
-                        <Input type='number'/>
+                        <Input type='number' />
                     </Form.Item>
                     <Form.Item
                         label="Address"
@@ -356,28 +320,7 @@ export default function DentistPage() {
                         <Input />
                     </Form.Item>
 
-                    <Form.Item
-                        label="Service"
-                        name="service"
-                        // hidden={isUpdate}
-                        rules={[
-                            {
-                                required: !isUpdate,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Select
-                            mode="multiple"
-                            style={{
-                                width: '100%',
-                            }}
-                            placeholder="Please select"
-                            defaultValue={serviceNames}
-                            options={services}
-                        />
-                    </Form.Item>
-
+                  
 
 
                 </Form>

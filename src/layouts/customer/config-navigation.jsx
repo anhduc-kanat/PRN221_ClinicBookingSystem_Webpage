@@ -7,19 +7,19 @@
 
 const navConfig = [
   {
-    title: 'Lịch khám',
+    title: 'Appointment',
     path: '/customer/appointment',
   },
   {
-    title: 'Hồ sơ',
+    title: 'Profile',
     path: '/customer/profile',
   },
   {
-    title: 'Tài khoản',
+    title: 'Account',
     path: '/customer/account',
   },
   {
-    title: 'Lịch sử thanh toán',
+    title: 'Payment History',
     path: '/customer/payment-history',
   }
 ];

@@ -101,9 +101,9 @@ export default function AppointmentPage() {
         <div className="row container">
             <div className="left col-md-5 col-sm-5 border-r-2 border-solid border-zinc">
                 <div className=''>
-                    <form>
+                    {/* <form>
                         <Input placeholder="Mã giao dịch, tên bệnh nhân" />
-                    </form>
+                    </form> */}
                 </div>
                 <div className='appointment  '>
                     {appointments.map(appointment => (
@@ -157,13 +157,13 @@ export default function AppointmentPage() {
                             <p>Nhà văn hóa Đại học Quốc gia</p>
                         </div>
                         <div className='p-8 '>
-                            <h4 className='font-bold text-xl '>Thông tin đặt khám</h4>
+                            <h4 className='font-bold text-xl '>Booking Information</h4>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Mã phiếu khám</span>
+                                <span className='text-lg'>Examination code</span>
                                 <span className='text-lg'>{details.id}</span>
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Ngày khám</span>
+                                <span className='text-lg'>Date</span>
                                 <span className='text-lg'>{details.date}</span>
                             </div>
                             {/* <div className='flex justify-between mt-4'>
@@ -182,28 +182,28 @@ export default function AppointmentPage() {
                             {/* <div className='ps-8 pe-8 pb-8'> */}
                             {/* <h4 className='font-bold text-xl'>Thông tin bệnh nhân</h4> */}
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Họ và tên</span>
+                                <span className='text-lg'>Name</span>
                                 <span className='text-lg'>{details.patientName}</span>
 
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Năm sinh</span>
+                                <span className='text-lg'>Date of birth</span>
                                 <span className='text-lg'>{fDate(details.patientDateOfBirth)}</span>
 
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Số điện thoại</span>
+                                <span className='text-lg'>Phone Number</span>
                                 <span className='text-lg'>{details.patientPhoneNumber}</span>
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Giới tính</span>
+                                <span className='text-lg'>Gender</span>
                                 <span className='text-lg'>{details.patientGender === 0 ? (
                                     <span>
                                         {GenderStatus.MALE}
                                     </span>
                                 ) : (
                                     <span>
-                                        {GenderStatus.MALE}
+                                        {GenderStatus.FEMALE}
                                     </span>
                                 )}</span>
 
@@ -211,7 +211,7 @@ export default function AppointmentPage() {
                         </div>
 
                         <div className='ps-8 pe-8 pb-8'>
-                            <h4 className='font-bold text-xl '>Dịch vụ</h4>
+                            <h4 className='font-bold text-xl '>Service</h4>
                             {details.appointmentServices.map(service => (
                                 <div key={service.id}>
                                     <div className='flex justify-between mt-4'>
@@ -219,7 +219,7 @@ export default function AppointmentPage() {
                                         <div className='flex justify-between'>
                                             <p className='text-lg'>{service.dentistName}</p>
                                             {service.meetings && service.meetings.length > 0 && (
-                                                <a className='text-lg ms-2 text-primary cursor-pointer' variant="outlined" onClick={handleClickOpen}>Tái khám</a>
+                                                <a className='text-lg ms-2 text-primary cursor-pointer' variant="outlined" onClick={handleClickOpen}>Re-examination</a>
                                             )}
                                             <Dialog
                                                 fullScreen={fullScreen}
@@ -227,21 +227,21 @@ export default function AppointmentPage() {
                                                 onClose={handleClose}
                                                 aria-labelledby="responsive-dialog-title">
                                                 <DialogTitle id="responsive-dialog-title ">
-                                                    {"Lịch tái khám"}
+                                                    {"Re-examination schedule"}
                                                 </DialogTitle>
                                                 <DialogContent>
                                                     {service.meetings.map(meeting => (
                                                         <div key={meeting.id}>
                                                             <div className='flex justify-between mt-4'>
-                                                                <span className='text-lg'>Ngày tái khám</span>
+                                                                <span className='text-lg'>Re-examination date</span>
                                                                 <span className='text-lg ms-8'>{fDate(meeting.date)}</span>
                                                             </div>
                                                             <div className='flex justify-between mt-4'>
-                                                                <span className='text-lg'>Lần gặp thứ</span>
+                                                                <span className='text-lg'>Meeting time</span>
                                                                 <span className='text-lg'>{meeting.meetingAttempt}</span>
                                                             </div>
                                                             <div className='flex justify-between mt-4 pb-4 border-b-2 border-solid border-zinc'>
-                                                                <span className='text-lg'>Trạng thái</span>
+                                                                <span className='text-lg'>Status</span>
                                                                 <span className='text-lg text-primary'>{meeting.status === 0 ? (
                                                                     <span>
                                                                         Undone
@@ -269,13 +269,13 @@ export default function AppointmentPage() {
                         </div>
 
                         <div className='ps-8 pe-8 pb-8'>
-                            <h4 className='font-bold text-xl mb-4'>Kết quả</h4>
+                            <h4 className='font-bold text-xl mb-4'>Result</h4>
                             {details.result && (
                                 <div key={details.result.id}>
                                     <div>
                                         {details.result.medicines.map(medicine => (
                                             <div key={medicine.id}>
-                                                <p className='text-lg'>Đơn thuốc</p>
+                                                <p className='text-lg'>Medicine</p>
                                                 <div ></div>
 
                                             </div>
@@ -285,13 +285,13 @@ export default function AppointmentPage() {
                                         {details.result.notes.map(note => (
                                             <div key={note.id}>
                                                 <div className='mb-4'>
-                                                    <p className='text-lg font-bold'>Ghi chú của bác sĩ {note.dentistName}</p>
+                                                    <p className='text-lg font-bold'>Note from {note.dentistName}</p>
                                                     <div className='flex justify-between mt-4'>
-                                                        <span className='text-lg'>Nội dung</span>
+                                                        <span className='text-lg'>Content</span>
                                                         <span className='text-lg'>{note.content}</span>
                                                     </div>
                                                     <div className='flex justify-between mt-4'>
-                                                        <span className='text-lg'>Dịch vụ</span>
+                                                        <span className='text-lg'>Service</span>
                                                         <span className='text-lg ms-8'>{note.serviceName}</span>
                                                     </div>
                                                 </div>
@@ -306,7 +306,7 @@ export default function AppointmentPage() {
                         </div>
                         <div className='ms-8'>
                             {details.status === 3 && (
-                                <Button color='error' variant="outlined" onClick={() => handleDeleteAppointment()}>Hủy đặt lịch</Button>
+                                <Button color='error' variant="outlined" onClick={() => handleDeleteAppointment()}>Cancel appointment</Button>
                             )}
                         </div>
                     </div>
