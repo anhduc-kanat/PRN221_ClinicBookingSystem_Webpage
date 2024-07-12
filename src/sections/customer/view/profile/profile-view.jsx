@@ -68,7 +68,7 @@ export default function ProfilePage() {
                 'Authorization': `Bearer ${token}`
             }
         }).then(res => {
-            setAlertMessage('Hồ sơ đã được xóa thành công.');
+            setAlertMessage('Delete profile successfully');
             setShowAlert(true);
             setTimeout(() => {
                 setShowAlert(false);
@@ -89,9 +89,9 @@ export default function ProfilePage() {
         <div className="row container">
             <div className="left col-md-5 col-sm-5 border-r-2 border-solid border-zinc">
                 <div className=''>
-                    <form>
-                        <Input placeholder="Mã giao dịch, tên bệnh nhân" />
-                    </form>
+                    {/* <form>
+                        <Input placeholder="Appointment code, patient name" />
+                    </form> */}
                 </div>
                 <div className='appointment  '>
                     {profiles.map(profile => (
@@ -124,7 +124,7 @@ export default function ProfilePage() {
                         <Box sx={{ '& button': { m: 5 } }}>
                             <div>
                                 <Button variant="contained" size="medium" onClick={handleShowForm}>
-                                    Thêm hồ sơ
+                                    Add Profile
                                 </Button>
                             </div>
 
@@ -154,23 +154,23 @@ export default function ProfilePage() {
                             </div>
                         </div>
                         <div className='mt-2'>
-                            <h4 className='font-bold text-xl '>Thông tin cơ bản</h4>
+                            <h4 className='font-bold text-xl '>Information</h4>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Họ và tên</span>
+                                <span className='text-lg'>Name</span>
                                 <span className='text-lg'>{details.lastName + " " + details.firstName}</span>
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Năm sinh</span>
+                                <span className='text-lg'>Date of birth</span>
                                 <span className='text-lg'>{fDate(details.dateOfBirth)}</span>
 
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Số điện thoại</span>
+                                <span className='text-lg'>Phone Number</span>
                                 <span className='text-lg'>{details.phoneNumber}</span>
 
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Giới tính</span>
+                                <span className='text-lg'>Gender</span>
                                 <span className='text-lg'>{details.gender === 0 ? (
                                     <span>
                                         {GenderStatus.MALE}
@@ -183,7 +183,7 @@ export default function ProfilePage() {
 
                             </div>
                             <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Địa chỉ</span>
+                                <span className='text-lg'>Address</span>
                                 <span className='text-lg'>{details.address}</span>
                             </div>
                             <div className='flex justify-between mt-4'>
@@ -194,12 +194,12 @@ export default function ProfilePage() {
                         <div className='flex justify-end mt-5'>
                             <div className='me-3'>
                                 <Button color='error' variant="contained" size="medium" onClick={() => handleDelete(details.id)}>
-                                    Xóa hồ sơ
+                                    Delete Profile
                                 </Button>
                             </div>
                             <div>
                                 <Button color='primary' variant="contained" size="medium" onClick={() => handleUpdate(details)}>
-                                    Chỉnh hồ sơ
+                                    Edit Profile
                                 </Button>
                             </div>
                         </div>

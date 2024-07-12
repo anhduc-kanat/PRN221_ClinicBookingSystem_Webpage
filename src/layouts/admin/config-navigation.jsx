@@ -7,16 +7,16 @@
 
 const navConfig = [
   {
-    title: 'Thống kê',
+    title: 'Dashboard',
     path: '/admin',
   },
   {
-    title: 'Quản lý bác sĩ',
+    title: 'Dentist management',
     path: '/admin/dentist',
   },
   {
-    title: 'Hồ sơ',
-    path: '/customer/profile',
+    title: 'Staff management',
+    path: '/admin/staff',
   },
   {
     title: 'Tài khoản',
