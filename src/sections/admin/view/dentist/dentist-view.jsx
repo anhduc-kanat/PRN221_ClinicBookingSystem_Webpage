@@ -14,6 +14,7 @@ export default function DentistPage() {
     const [isModal, setIsModal] = useState(false);
     const [dentistUpdate, setDentistUpdate] = useState(null);
     const [services, setSetvices] = useState([]);
+    const [serviceNames, setServiceNames] = useState([]);
     const [form] = Form.useForm();
     const initialValues = {
         firstName: '',
@@ -22,7 +23,7 @@ export default function DentistPage() {
         email: '',
         phoneNumber: '',
         dateOfBirth: null,
-        services: ""
+        services: []
     };
 
     useEffect(() => {
@@ -45,10 +46,12 @@ export default function DentistPage() {
     };
 
     useEffect(() => {
-        if (dentistUpdate) {
+        if (dentistUpdate && dentistUpdate.services) {
+            const defaultServiceIds = dentistUpdate.services.map(service => service.id);
             form.setFieldsValue({
                 ...dentistUpdate,
-                dateOfBirth: dentistUpdate.dateOfBirth ? moment(dentistUpdate.dateOfBirth) : null
+                dateOfBirth: dentistUpdate.dateOfBirth ? moment(dentistUpdate.dateOfBirth) : null,
+                service: defaultServiceIds
             });
         } else {
             form.resetFields();
@@ -221,8 +224,13 @@ export default function DentistPage() {
         if (record === null) {
             fetchService()
             setIsUpdate(false)
+           
         } else {
+            console.log(dentistUpdate)
+            fetchService()
             setIsUpdate(true)
+            // const defaultServiceNames = dentistUpdate.services.map(service => service.name);
+            // setServiceNames(defaultServiceNames)
         }
         setIsModal(true);
     };
@@ -351,7 +359,7 @@ export default function DentistPage() {
                     <Form.Item
                         label="Service"
                         name="service"
-                        hidden={isUpdate}
+                        // hidden={isUpdate}
                         rules={[
                             {
                                 required: !isUpdate,
@@ -365,6 +373,7 @@ export default function DentistPage() {
                                 width: '100%',
                             }}
                             placeholder="Please select"
+                            defaultValue={serviceNames}
                             options={services}
                         />
                     </Form.Item>
