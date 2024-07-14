@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Popconfirm, Button, Alert, Modal, Form, Input, DatePicker, Select } from 'antd';
+import { Table } from 'antd';
 import axios from 'axios';
-import moment from 'moment';
 import { fDate } from 'src/utils/format-time';
 const apiRoot = import.meta.env.VITE_API_ROOT;
 
@@ -31,7 +30,7 @@ export default function PaymentHistoryPage() {
             }).catch(error => console.error('Error fetching services:', error));
     };
 
-    
+
 
     const columns = [
         {
@@ -49,6 +48,8 @@ export default function PaymentHistoryPage() {
         {
             title: 'Pay Date',
             dataIndex: 'payDate',
+            defaultSortDate: 'descend',
+            sorter: (a, b) => new Date(a.payDate) - new Date(b.payDate)
         },
         {
             title: 'Status',
@@ -57,12 +58,14 @@ export default function PaymentHistoryPage() {
         {
             title: 'Service',
             dataIndex: 'serviceName',
+            render: (text) => <div className="whitespace-pre-wrap">{text}</div>
         }
     ];
 
-    const data =payments.map(payment => ({
+    const data = payments.map(payment => ({
         ...payment,
-        payDate: fDate(payment.payDate)
+        payDate: fDate(payment.payDate),
+        serviceName: payment.appointment.appointment.map(service => service.serviceName).join('\n')
     }));
     return (
         <>

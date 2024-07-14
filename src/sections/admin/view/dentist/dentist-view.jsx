@@ -15,6 +15,7 @@ export default function DentistPage() {
     const [dentistUpdate, setDentistUpdate] = useState(null);
     const [services, setSetvices] = useState([]);
     const [serviceNames, setServiceNames] = useState([]);
+    const [typeAlert, setTypeAlert] = useState({});
     const [form] = Form.useForm();
     const initialValues = {
         firstName: '',
@@ -116,6 +117,7 @@ export default function DentistPage() {
         })
             .then(response => {
                 if (response.data.statusCode === 200) {
+                    setTypeAlert("success")
                     setAlertMessage('Account delete successfully');
                     setShowAlert(true);
                     setTimeout(() => {
@@ -131,11 +133,11 @@ export default function DentistPage() {
     const handleUpdate = () => {
         setIsModal(false);
         form.validateFields().then(values => {
-            const updatedDentist = { 
+            const updatedDentist = {
                 ...dentistUpdate,
-                 ...values, 
+                ...values,
                 servicesId: values.service
-             };
+            };
             console.log(updatedDentist)
             axios.put(`${apiRoot}/dentist/update-dentist/${updatedDentist.id}`, updatedDentist, {
                 headers: {
@@ -144,6 +146,7 @@ export default function DentistPage() {
             })
                 .then(response => {
                     if (response.data.statusCode === 200) {
+                        setTypeAlert("success")
                         setAlertMessage('Account updated successfully');
                         setShowAlert(true);
                         setTimeout(() => {
@@ -169,29 +172,36 @@ export default function DentistPage() {
                     formattedDateOfBirth = momentDate.format('YYYY-MM-DD');
                 }
             }
-            const addDentist = { 
+            const addDentist = {
                 ...values,
                 dateOfBirth: formattedDateOfBirth,
                 servicesId: values.service
-                };
+            };
             console.log(addDentist)
             axios.post(`${apiRoot}/dentist/create-dentist`, addDentist, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             }).then(response => {
-                    if (response.data.statusCode === 201) {
-                        setAlertMessage('Account add successfully');
-                        setShowAlert(true);
-                        setTimeout(() => {
-                            setShowAlert(false);
-                        }, 3000);
-                        setDentistUpdate(null)
-                        fetchDetails();
-                    } else {
-                        console.error('Failed to add dentist:', response.data.message);
-                    }
-                }).catch(error => console.error('Error add dentist:', error));
+                if (response.data.statusCode === 201) {
+                    setTypeAlert("success")
+                    setAlertMessage('Account add successfully');
+                    setShowAlert(true);
+                    setTimeout(() => {
+                        setShowAlert(false);
+                    }, 3000);
+                    setDentistUpdate(null)
+                    fetchDetails();
+                } else {
+                    setTypeAlert("error")
+                    setAlertMessage(response.data.message);
+                    setShowAlert(true);
+                    setTimeout(() => {
+                        setShowAlert(false);
+                    }, 3000);
+                    console.error('Failed to add dentist:', response.data.message);
+                }
+            }).catch(error => console.error('Error add dentist:', error));
         });
     }
 
@@ -224,7 +234,7 @@ export default function DentistPage() {
         if (record === null) {
             fetchService()
             setIsUpdate(false)
-           
+
         } else {
             console.log(dentistUpdate)
             fetchService()
@@ -249,7 +259,7 @@ export default function DentistPage() {
     return (
         <>
             {showAlert && (
-                <Alert className='mb-5' message={alertMessage} type="success" showIcon onClose={() => setShowAlert(false)} />
+                <Alert className='mb-5' message={alertMessage} type={typeAlert} showIcon onClose={() => setShowAlert(false)} />
             )}
             <div>
                 <div className='mb-4 '>
@@ -315,7 +325,7 @@ export default function DentistPage() {
                             },
                         ]}
                     >
-                        <Input type='number'/>
+                        <Input type='number' />
                     </Form.Item>
                     <Form.Item
                         label="Address"

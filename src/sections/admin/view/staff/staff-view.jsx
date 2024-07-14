@@ -14,6 +14,7 @@ export default function StaffPage() {
     const [isModal, setIsModal] = useState(false);
     const [staffUpdate, setStaffUpdate] = useState(null);
     const [form] = Form.useForm();
+    const [typeAlert, setTypeAlert] = useState({});
     const initialValues = {
         firstName: '',
         lastName: '',
@@ -98,7 +99,7 @@ export default function StaffPage() {
         }
     ];
 
-    const data =staffs.map(staff => ({
+    const data = staffs.map(staff => ({
         ...staff,
         name: `${staff.lastName} ${staff.firstName}`,
         date: fDate(staff.dateOfBirth)
@@ -112,6 +113,7 @@ export default function StaffPage() {
         })
             .then(response => {
                 if (response.data.statusCode === 200) {
+                    setTypeAlert("success")
                     setAlertMessage('Account delete successfully');
                     setShowAlert(true);
                     setTimeout(() => {
@@ -135,6 +137,7 @@ export default function StaffPage() {
             })
                 .then(response => {
                     if (response.data.statusCode === 200) {
+                        setTypeAlert("success")
                         setAlertMessage('Account updated successfully');
                         setShowAlert(true);
                         setTimeout(() => {
@@ -160,10 +163,10 @@ export default function StaffPage() {
                     formattedDateOfBirth = momentDate.format('YYYY-MM-DD');
                 }
             }
-            const addDentist = { 
+            const addDentist = {
                 ...values,
                 dateOfBirth: formattedDateOfBirth
-                 };
+            };
             console.log(addDentist)
             axios.post(`${apiRoot}/staff/create-staff`, addDentist, {
                 headers: {
@@ -172,6 +175,7 @@ export default function StaffPage() {
             })
                 .then(response => {
                     if (response.data.statusCode === 201) {
+                        setTypeAlert("success")
                         setAlertMessage('Account add successfully');
                         setShowAlert(true);
                         setTimeout(() => {
@@ -179,6 +183,12 @@ export default function StaffPage() {
                         }, 3000);
                         fetchDetails();
                     } else {
+                        setTypeAlert("error")
+                        setAlertMessage(response.data.message);
+                        setShowAlert(true);
+                        setTimeout(() => {
+                            setShowAlert(false);
+                        }, 3000);
                         console.error('Failed to add staff:', response.data.message);
                     }
                 }).catch(error => console.error('Error adding staff:', error));
@@ -213,7 +223,7 @@ export default function StaffPage() {
     return (
         <>
             {showAlert && (
-                <Alert className='mb-5' message={alertMessage} type="success" showIcon onClose={() => setShowAlert(false)} />
+                <Alert className='mb-5' message={alertMessage} type={typeAlert} showIcon onClose={() => setShowAlert(false)} />
             )}
             <div>
                 <div className='mb-4 '>
@@ -320,7 +330,7 @@ export default function StaffPage() {
                         <Input />
                     </Form.Item>
 
-                  
+
 
 
                 </Form>
