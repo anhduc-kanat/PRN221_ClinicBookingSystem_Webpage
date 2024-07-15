@@ -36,6 +36,8 @@ export const AboutPage = lazy(() => import('src/pages/AboutPage'))
 export const SuccessBooking = lazy(() => import('src/pages/SuccessBooking'));
 export const FailBooking = lazy(() => import('src/pages/FailBooking'));
 
+export const ServiceManagementPage = lazy(() => import('src/pages/Admin/ServiceManagementPage'));
+export const SlotManagementPage = lazy(() => import('src/pages/Admin/SlotManagementPage'));
 export const DentistManagementPage = lazy(()=> import('src/pages/Admin/DentistManagementPage'))
 export const StaffManagementPage = lazy(()=> import('src/pages/Admin/StaffManagementPage'))
 
@@ -100,7 +102,8 @@ export default function Router() {
         { element: <IndexPage />, index: true },
         { path: 'dentist', element: <DentistManagementPage /> },
         { path: 'staff', element: <StaffManagementPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        { path: 'service', element: <ServiceManagementPage /> },
+        { path: 'slot', element: <SlotManagementPage /> },
       ],
     },
     {
