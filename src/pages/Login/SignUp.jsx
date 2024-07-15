@@ -74,7 +74,7 @@ export default function SignUp() {
         <>
 
             <div className="flex items-center justify-center min-h-screen bg-gray-100">
-                <Card className="w-full max-w-md p-7" title="Sign Up" bordered={false}>
+                <Card className="w-full max-w-md p-7 " title="Sign Up" bordered={false}>
                     {showAlert && (
                         <Alert className='mb-5' message={alertMessage} type='error' showIcon onClose={() => setShowAlert(false)} />
                     )}
