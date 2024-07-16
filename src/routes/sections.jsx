@@ -6,6 +6,10 @@ import DashboardLayout from 'src/layouts/dashboard';
 import DashboardLayoutDentist from 'src/layouts/dentist';
 import ProtectedRoute from './ProtectedRoutes';
 import AdminLayout from 'src/layouts/admin';
+import StaffLayout from 'src/layouts/staff';
+// import AboutPage from 'src/pages/AboutPage.jsx';
+// import ServiceTeethPage from 'src/pages/ServiceTeethPage.jsx';
+// import PriceList from 'src/pages/PriceList.jsx';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/Admin/blog'));
@@ -38,6 +42,8 @@ export const ServiceManagementPage = lazy(() => import('src/pages/Admin/ServiceM
 export const SlotManagementPage = lazy(() => import('src/pages/Admin/SlotManagementPage'));
 export const DentistManagementPage = lazy(()=> import('src/pages/Admin/DentistManagementPage'))
 export const StaffManagementPage = lazy(()=> import('src/pages/Admin/StaffManagementPage'))
+export const AppointmentPage = lazy(() => import('src/pages/appointment'))
+
 
 // ----------------------------------------------------------------------
 
@@ -150,6 +156,23 @@ export default function Router() {
       path: '*',
       element: <Navigate to="/404" replace />,
     },
+    {
+      path: 'staff',
+      element: (
+        <StaffLayout>
+          <ProtectedRoute allowedRoles={['STAFF']}>
+          <Suspense>
+            <Outlet />
+          </Suspense>
+          </ProtectedRoute>
+        </StaffLayout>
+      ),
+      children: [
+        { element: <IndexPage />, index: true },
+        { path: 'appointment', element: <AppointmentPage /> }
+      ],
+             
+    }
   ]);
 
   return routes;
