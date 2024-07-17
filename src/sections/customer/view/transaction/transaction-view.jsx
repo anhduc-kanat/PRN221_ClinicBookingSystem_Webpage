@@ -2,12 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import axios from 'axios';
 import { fDate } from 'src/utils/format-time';
+import TransactionStatus from 'src/enum/transaction-enum';
 const apiRoot = import.meta.env.VITE_API_ROOT;
 
 export default function PaymentHistoryPage() {
     const [payments, setPayments] = useState([]);
 
     const token = localStorage.getItem("accessToken");
+
+    const getStatusTransaction = (status) => {
+        switch (status) {
+            case 1:
+                return <p className='text-green'>{TransactionStatus.DONE}</p>;
+            case 2:
+                return <p className='text-yellow'>{TransactionStatus.PENDING}</p>;
+            case 3:
+                return <p className='text-yellow'>{TransactionStatus.OVERDUE}</p>;
+            default:
+                return <p className='text-red'>{TransactionStatus.CANCELLED}</p>;
+        }
+    };
 
     useEffect(() => {
         fetchDetails();
@@ -46,6 +60,10 @@ export default function PaymentHistoryPage() {
             dataIndex: 'cardType',
         },
         {
+            title: 'Account Name',
+            dataIndex: 'userAccountName',
+        },
+        {
             title: 'Pay Date',
             dataIndex: 'payDate',
             defaultSortDate: 'descend',
@@ -53,7 +71,7 @@ export default function PaymentHistoryPage() {
         },
         {
             title: 'Status',
-            dataIndex: 'transactionStatus',
+            dataIndex: 'status',
         },
         {
             title: 'Service',
@@ -65,6 +83,8 @@ export default function PaymentHistoryPage() {
     const data = payments.map(payment => ({
         ...payment,
         payDate: fDate(payment.payDate),
+        status : getStatusTransaction(payment.status),
+        userAccountName: payment.appointment.userAccountName,
         serviceName: payment.appointment.appointment.map(service => service.serviceName).join('\n')
     }));
     return (

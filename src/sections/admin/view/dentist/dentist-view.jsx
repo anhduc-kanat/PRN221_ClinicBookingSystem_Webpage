@@ -133,10 +133,19 @@ export default function DentistPage() {
     const handleUpdate = () => {
         setIsModal(false);
         form.validateFields().then(values => {
+            let formattedDateOfBirth = null;
+            if (values.dateOfBirth) {
+                const momentDate = values.dateOfBirth;
+                if (momentDate.isValid()) {
+                    formattedDateOfBirth = momentDate.format('YYYY-MM-DD');
+                }
+            }
             const updatedDentist = {
                 ...dentistUpdate,
                 ...values,
-                servicesId: values.service
+                servicesId: values.service,
+                dateOfBirth: formattedDateOfBirth 
+
             };
             console.log(updatedDentist)
             axios.put(`${apiRoot}/dentist/update-dentist/${updatedDentist.id}`, updatedDentist, {
@@ -352,7 +361,7 @@ export default function DentistPage() {
                         <DatePicker />
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="Password"
                         name="password"
                         hidden={isUpdate}
@@ -364,7 +373,7 @@ export default function DentistPage() {
                         ]}
                     >
                         <Input />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                         label="Service"

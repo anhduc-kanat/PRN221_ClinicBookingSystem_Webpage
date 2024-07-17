@@ -129,7 +129,14 @@ export default function StaffPage() {
     const handleUpdate = () => {
         setIsModal(false);
         form.validateFields().then(values => {
-            const updatedDentist = { ...staffUpdate, ...values };
+            let formattedDateOfBirth = null;
+            if (values.dateOfBirth) {
+                const momentDate = values.dateOfBirth;
+                if (momentDate.isValid()) {
+                    formattedDateOfBirth = momentDate.format('YYYY-MM-DD');
+                }
+            }
+            const updatedDentist = { ...staffUpdate, ...values, dateOfBirth : formattedDateOfBirth };
             axios.put(`${apiRoot}/staff/update-staff/${updatedDentist.id}`, updatedDentist, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -316,7 +323,7 @@ export default function StaffPage() {
                         <DatePicker />
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="Password"
                         name="password"
                         hidden={isUpdate}
@@ -328,7 +335,7 @@ export default function StaffPage() {
                         ]}
                     >
                         <Input />
-                    </Form.Item>
+                    </Form.Item> */}
 
 
 
