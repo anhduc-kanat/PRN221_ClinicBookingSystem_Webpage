@@ -132,11 +132,11 @@ export default function DentistPage() {
     const handleUpdate = () => {
         setIsModal(false);
         form.validateFields().then(values => {
-            const updatedDentist = { 
+            const updatedDentist = {
                 ...dentistUpdate,
-                 ...values, 
+                ...values,
                 servicesId: values.service
-             };
+            };
             console.log(updatedDentist)
             axios.put(`${apiRoot}/dentist/update-dentist/${updatedDentist.id}`, updatedDentist, {
                 headers: {
@@ -171,221 +171,241 @@ export default function DentistPage() {
                     formattedDateOfBirth = momentDate.format('YYYY-MM-DD');
                 }
             }
-            const addDentist = { 
+            const addDentist = {
                 ...values,
                 dateOfBirth: formattedDateOfBirth,
                 servicesId: values.service
-                };
+            };
             console.log(addDentist)
             axios.post(`${apiRoot}/dentist/create-dentist`, addDentist, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             }).then(response => {
-                    if (response.data.statusCode === 201) {
-                        setAlertMessage('Account add successfully');
-                        setShowAlert(true);
-                        setTimeout(() => {
-                            setShowAlert(false);
-                        }, 3000);
-                        setDentistUpdate(null)
-                        fetchDetails();
-                    } else {
-                        message.error(response.data.message);
-                        console.error('Failed to add dentist:', response.data.message);
-                    }
-                }).catch(error => console.error('Error add dentist:', error));
-        });
-    }
-
-
-    const fetchService = () => {
-        axios.get(`${apiRoot}/service/get-all-services`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                if (response.data.statusCode === 200) {
-                    const serviceOption = response.data.data.map(service => ({
-                        label: service.name,
-                        value: service.id
-                    }))
-                    setSetvices(serviceOption)
+                if (response.data.statusCode === 201) {
+                    setAlertMessage('Account add successfully');
+                    setShowAlert(true);
+                    setTimeout(() => {
+                        setShowAlert(false);
+                    }, 3000);
+                    setDentistUpdate(null)
+                    fetchDetails();
                 } else {
                     message.error(response.data.message);
-                    console.error('Failed to fetch service:', response.data.message);
+                    console.error('Failed to add dentist:', response.data.message);
                 }
-            }).catch(error => console.error('Error fetch service:', error));
+            }).catch(error => console.error('Error add dentist:', error));
+            if (response.data.statusCode === 201) {
+                setTypeAlert("success")
+                setAlertMessage('Account add successfully');
+                setShowAlert(true);
+                setTimeout(() => {
+                    setShowAlert(false);
+                }, 3000);
+                setDentistUpdate(null)
+                fetchDetails();
+            } else {
+                setTypeAlert("error")
+                setAlertMessage(response.data.message);
+                setShowAlert(true);
+                setTimeout(() => {
+                    setShowAlert(false);
+                }, 3000);
+                console.error('Failed to add dentist:', response.data.message);
+            }
+        }).catch(error => console.error('Error add dentist:', error));
     };
 
-    const handleCancel = () => {
-        setIsModal(false);
-    };
-
-    const showModal = (record) => {
-        setDentistUpdate(record || initialValues);
-        if (record === null) {
-            fetchService()
-            setIsUpdate(false)
-           
-        } else {
-            console.log(dentistUpdate)
-            fetchService()
-            setIsUpdate(true)
-            // const defaultServiceNames = dentistUpdate.services.map(service => service.name);
-            // setServiceNames(defaultServiceNames)
-        }
-        setIsModal(true);
-    };
-
-    const handleOk = () => {
-        if (isUpdate) {
-            handleUpdate()
-        } else {
-            handleAdd()
-        }
-    }
-
-
-
-
-    return (
-        <>
-            {showAlert && (
-                <Alert className='mb-5' message={alertMessage} type="success" showIcon onClose={() => setShowAlert(false)} />
-            )}
-            <div>
-                <div className='mb-4 '>
-                    <Button className='p-5' onClick={() => showModal(null)} type='primary'>Add dentist account</Button>
-                </div>
-                <Table
-                    columns={columns}
-                    dataSource={data}
-                />
-            </div>
-
-            <Modal title="Basic Modal" open={isModal} onOk={handleOk} onCancel={handleCancel}>
-                <Form
-                    form={form}
-                    variant="filled"
-                    style={{
-                        maxWidth: 600,
-                    }}
-                >
-                    <Form.Item
-                        label="First Name"
-                        name="firstName"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="Last Name"
-                        name="lastName"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="Phone Number"
-                        name="phoneNumber"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Input type='number'/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Address"
-                        name="address"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="Date of birth"
-                        name="dateOfBirth"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <DatePicker />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Password"
-                        name="password"
-                        hidden={isUpdate}
-                        rules={[
-                            {
-                                required: !isUpdate,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Service"
-                        name="service"
-                        // hidden={isUpdate}
-                        rules={[
-                            {
-                                required: !isUpdate,
-                                message: 'Please input!',
-                            },
-                        ]}
-                    >
-                        <Select
-                            mode="multiple"
-                            style={{
-                                width: '100%',
-                            }}
-                            placeholder="Please select"
-                            defaultValue={serviceNames}
-                            options={services}
-                        />
-                    </Form.Item>
-
-
-
-                </Form>
-            </Modal>
-        </>
-    );
 }
+
+
+const fetchService = () => {
+    axios.get(`${apiRoot}/service/get-all-services`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+        .then(response => {
+            if (response.data.statusCode === 200) {
+                const serviceOption = response.data.data.map(service => ({
+                    label: service.name,
+                    value: service.id
+                }))
+                setSetvices(serviceOption)
+            } else {
+                message.error(response.data.message);
+
+                console.error('Failed to fetch service:', response.data.message);
+            }
+        }).catch(error => console.error('Error fetch service:', error));
+};
+
+const handleCancel = () => {
+    setIsModal(false);
+};
+
+const showModal = (record) => {
+    setDentistUpdate(record || initialValues);
+    if (record === null) {
+        fetchService()
+        setIsUpdate(false)
+
+    } else {
+        console.log(dentistUpdate)
+        fetchService()
+        setIsUpdate(true)
+        // const defaultServiceNames = dentistUpdate.services.map(service => service.name);
+        // setServiceNames(defaultServiceNames)
+    }
+    setIsModal(true);
+};
+
+const handleOk = () => {
+    if (isUpdate) {
+        handleUpdate()
+    } else {
+        handleAdd()
+    }
+}
+
+
+
+
+return (
+    <>
+        {showAlert && (
+            <Alert className='mb-5' message={alertMessage} type="success" showIcon onClose={() => setShowAlert(false)} />
+        )}
+        <div>
+            <div className='mb-4 '>
+                <Button className='p-5' onClick={() => showModal(null)} type='primary'>Add dentist account</Button>
+            </div>
+            <Table
+                columns={columns}
+                dataSource={data}
+            />
+        </div>
+
+        <Modal title="Basic Modal" open={isModal} onOk={handleOk} onCancel={handleCancel}>
+            <Form
+                form={form}
+                variant="filled"
+                style={{
+                    maxWidth: 600,
+                }}
+            >
+                <Form.Item
+                    label="First Name"
+                    name="firstName"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    label="Last Name"
+                    name="lastName"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    label="Phone Number"
+                    name="phoneNumber"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <Input type='number' />
+                </Form.Item>
+                <Form.Item
+                    label="Address"
+                    name="address"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    label="Date of birth"
+                    name="dateOfBirth"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <DatePicker />
+                </Form.Item>
+
+                <Form.Item
+                    label="Password"
+                    name="password"
+                    hidden={isUpdate}
+                    rules={[
+                        {
+                            required: !isUpdate,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    label="Service"
+                    name="service"
+                    // hidden={isUpdate}
+                    rules={[
+                        {
+                            required: !isUpdate,
+                            message: 'Please input!',
+                        },
+                    ]}
+                >
+                    <Select
+                        mode="multiple"
+                        style={{
+                            width: '100%',
+                        }}
+                        placeholder="Please select"
+                        defaultValue={serviceNames}
+                        options={services}
+                    />
+                </Form.Item>
+
+
+
+            </Form>
+        </Modal>
+    </>
+);
