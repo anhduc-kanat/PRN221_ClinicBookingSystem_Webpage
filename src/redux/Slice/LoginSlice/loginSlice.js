@@ -25,9 +25,12 @@ export const login = createAsyncThunk(
         localStorage.setItem("role", role);
 
         const profile = await getRequest("/user/my-profile");
-        localStorage.setItem("profile", JSON.stringify(profile.data.data));
+        if (profile) {
+          localStorage.setItem("profile", JSON.stringify(profile.data.data));
+        } else {
+          console.log("Cannot get profile of user")
+        }
 
-        
         // Trả về dữ liệu user từ phản hồi API
         return { ...response.data, role };
       } else {
