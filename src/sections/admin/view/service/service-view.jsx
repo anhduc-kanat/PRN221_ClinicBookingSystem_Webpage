@@ -20,6 +20,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
+import { message } from "antd";
 
 const apiRoot = import.meta.env.VITE_API_ROOT;
 
@@ -46,8 +47,13 @@ export default function ServiceManagementView() {
     const fetchServices = () => {
         axios.get(`${apiRoot}/service/get-all-services`)
             .then(res => {
-                console.log(res.data);
-                setServices(res.data.data);
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    console.log(res.data);
+                    setServices(res.data.data);
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error at fetch Services:", error.message);
@@ -108,16 +114,20 @@ export default function ServiceManagementView() {
     const handleSaveNewService = () => {
         axios.post(`${apiRoot}/service/create-service`, newService)
             .then(res => {
-                console.log("Service created:", res.data);
-                setNewService({
-                    name: "",
-                    description: "",
-                    expectedDurationInMinute: "",
-                    price: "",
-                    serviceType: ""
-                });
-                fetchServices();
-                handleCloseAddService();
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    setNewService({
+                        name: "",
+                        description: "",
+                        expectedDurationInMinute: "",
+                        price: "",
+                        serviceType: ""
+                    });
+                    fetchServices();
+                    handleCloseAddService();
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error creating service:", error.message);
@@ -127,9 +137,14 @@ export default function ServiceManagementView() {
     const handleSaveEditService = () => {
         axios.put(`${apiRoot}/service/update-service/${selectedService.id}`, selectedService)
             .then(res => {
-                console.log("Service updated:", res.data);
-                fetchServices();
-                handleCloseEditService();
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    console.log("Service updated:", res.data);
+                    fetchServices();
+                    handleCloseEditService();
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error updating service:", error.message);
@@ -139,9 +154,14 @@ export default function ServiceManagementView() {
     const handleDeleteService = () => {
         axios.delete(`${apiRoot}/service/delete-service/${selectedService.id}`)
             .then(res => {
-                console.log("Service deleted:", res.data);
-                fetchServices();
-                handleCloseDeleteService();
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    console.log("Service deleted:", res.data);
+                    fetchServices();
+                    handleCloseDeleteService();
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error deleting service:", error.message);

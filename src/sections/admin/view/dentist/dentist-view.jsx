@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Popconfirm, Button, Alert, Modal, Form, Input, DatePicker, Select } from 'antd';
+import { Table, Popconfirm, Button, Alert, Modal, Form, Input, DatePicker, Select, message } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { fDate } from 'src/utils/format-time';
@@ -123,6 +123,7 @@ export default function DentistPage() {
                     }, 3000);
                     fetchDetails();
                 } else {
+                    message.error(response.data.message);
                     console.error('Failed to fetch services:', response.data.message);
                 }
             }).catch(error => console.error('Error fetching services:', error));
@@ -152,6 +153,7 @@ export default function DentistPage() {
                         setDentistUpdate(null)
                         fetchDetails();
                     } else {
+                        message.error(response.data.message);
                         console.error('Failed to update dentist:', response.data.message);
                     }
                 }).catch(error => console.error('Error updating dentist:', error));
@@ -189,6 +191,7 @@ export default function DentistPage() {
                         setDentistUpdate(null)
                         fetchDetails();
                     } else {
+                        message.error(response.data.message);
                         console.error('Failed to add dentist:', response.data.message);
                     }
                 }).catch(error => console.error('Error add dentist:', error));
@@ -210,6 +213,7 @@ export default function DentistPage() {
                     }))
                     setSetvices(serviceOption)
                 } else {
+                    message.error(response.data.message);
                     console.error('Failed to fetch service:', response.data.message);
                 }
             }).catch(error => console.error('Error fetch service:', error));
