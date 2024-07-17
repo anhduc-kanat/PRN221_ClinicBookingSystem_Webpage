@@ -34,6 +34,7 @@ export const PaymentHistoryPage = lazy(() => import('src/pages/Customer/PaymentH
 export const PriceList = lazy(() => import('src/pages/PriceList'));
 export const ServiceTeethPage = lazy(() => import('src/pages/ServiceTeethPage'));
 export const AboutPage = lazy(() => import('src/pages/AboutPage'))
+export const ContactPage = lazy(() => import('src/pages/ContactPage'));
 
 export const SuccessBooking = lazy(() => import('src/pages/SuccessBooking'));
 export const FailBooking = lazy(() => import('src/pages/FailBooking'));
@@ -86,6 +87,10 @@ export default function Router() {
     {
       path: 'price',
       element: <PriceList />,
+    },
+    {
+      path: 'contact',
+      element: <ContactPage />,
     },
     {
       path: 'admin',
