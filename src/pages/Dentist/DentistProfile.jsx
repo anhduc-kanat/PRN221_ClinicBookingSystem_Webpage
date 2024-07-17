@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, DatePicker } from 'antd';
+import { Form, Input, DatePicker, Col, Row, Button } from 'antd';
 import { Helmet } from 'react-helmet-async';
 import dayjs from 'dayjs';
+import './Dentists.css';
 
 export default function DentistProfile() {
   const [profile, setProfile] = useState(null);
+  const [responsibleServices, setResponsibleServices] = useState([]);
 
   useEffect(() => {
     const storedProfile = JSON.parse(localStorage.getItem('profile'));
     setProfile(storedProfile);
+    setResponsibleServices(storedProfile.businessServices);
   }, []);
 
   if (!profile) {
     return <div>Loading...</div>;
+  }
+
+  const handleChangePassword = () => {
+
   }
 
   return (
@@ -20,7 +27,7 @@ export default function DentistProfile() {
       <Helmet>
         <title>Dentist Profile</title>
       </Helmet>
-      <h1>Dentist Profile</h1>
+      <h1 className='profile-title'>{profile.firstName}'s Profile</h1>
       <div className='dentist-profile-form'>
         <Form
           layout='vertical'
@@ -33,18 +40,30 @@ export default function DentistProfile() {
             phoneNumber: profile.phoneNumber,
           }}
         >
-          <Form.Item label='First Name' name='firstName'>
-            <Input readOnly />
-          </Form.Item>
-          <Form.Item label='Last Name' name='lastName'>
-            <Input readOnly />
-          </Form.Item>
-          <Form.Item label='Address' name='address'>
-            <Input readOnly />
-          </Form.Item>
-          <Form.Item label='Date of Birth' name='dateOfBirth'>
-            <DatePicker readOnly />
-          </Form.Item>
+          <Row gutter={50}>
+            <Col span={12}>
+              <Form.Item label='First Name' name='firstName'>
+                <Input readOnly />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label='Last Name' name='lastName'>
+                <Input readOnly />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={50}>
+            <Col span={12}>
+              <Form.Item label='Date of Birth' name='dateOfBirth'>
+                <DatePicker readOnly style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label='Address' name='address'>
+                <Input readOnly />
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item label='Email' name='email'>
             <Input readOnly />
           </Form.Item>
@@ -52,7 +71,20 @@ export default function DentistProfile() {
             <Input readOnly />
           </Form.Item>
         </Form>
+        <div>
+          <p className='profile-title'>Responsible Services</p>
+          {responsibleServices.length > 0 ? (
+            responsibleServices.map((service, index ) => (
+              <li key={index}>{service.name}</li>
+            ))
+          ) : (
+            <>
+              <h3>No Services Found</h3>
+            </>
+          )}
+        </div>
       </div>
+      <Button style={{width: '30%'}}  onclick={handleChangePassword} >Change Password</Button>
     </>
   );
 }
