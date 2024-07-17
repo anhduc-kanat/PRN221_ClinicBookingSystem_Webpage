@@ -21,7 +21,11 @@ function PriceList() {
   const fetchData = () => {
     getRequest('/service/get-all-services')
       .then((res) => {
-        setListPrice(res.data.data);
+        const formattedListPrice = res.data.data.map(row => ({
+          ...row,
+          price: `${row.price.toLocaleString()} VNĐ`,
+        }));
+        setListPrice(formattedListPrice);
       })
       .catch((err) => {
         setErrorMessage(err);
