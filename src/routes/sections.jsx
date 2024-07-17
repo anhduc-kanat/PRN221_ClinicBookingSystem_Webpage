@@ -21,6 +21,8 @@ export const Page403 = lazy(() => import('src/pages/page-unauthorized'));
 export const HomePage = lazy(() => import('src/pages/HomePage'));
 export const BookingPage = lazy(() => import('src/pages/BookingPage'));
 export const Login = lazy(() => import('src/pages/Login/Login'));
+export const SignUp = lazy(() => import('src/pages/Login/SignUp'));
+
 export const DentistWorkingPage = lazy(() => import('src/pages/Dentist/DentistWorkingPage'));
 export const DentistProfile = lazy(() => import('src/pages/Dentist/DentistProfile'));
 export const DentistAppointmentDetail = lazy(() => import('src/pages/Dentist/DentistAppointmentDetail'));
@@ -59,6 +61,10 @@ export default function Router() {
     {
       path: 'login',
       element: <Login />,
+    },
+    {
+      path: 'signup',
+      element: <SignUp/>
     },
     {
       path: "booking",

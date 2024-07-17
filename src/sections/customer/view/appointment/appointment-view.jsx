@@ -1,6 +1,3 @@
-
-import { Input } from 'antd';
-
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -16,22 +13,19 @@ import axios from 'axios';
 import AppointmentStatus from 'src/enum/appointment-enum';
 import GenderStatus from 'src/enum/gender-enum';
 import { fDate } from 'src/utils/format-time';
-
-
+import MeetingStatus from 'src/enum/metting-enum';
 
 const apiRoot = import.meta.env.VITE_API_ROOT;
-
-// ----------------------------------------------------------------------
-
-
 
 export default function AppointmentPage() {
     const [details, setDetails] = useState(null);
     const [appointments, setAppointment] = useState([]);
     const [hover, setHover] = useState(null);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [selectedService, setSelectedService] = useState(null);
     const [pageTotal, setPageTotal] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -56,16 +50,17 @@ export default function AppointmentPage() {
         }).catch(error => console.error('Error fetching services:', error));
     }, [currentPage]);
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (service) => {
+        setSelectedService(service);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setSelectedService(null);
     };
 
     const handlePageChange = (event, page) => {
-
         setCurrentPage(page);
         console.log('Selected page:', page);
     };
@@ -75,37 +70,56 @@ export default function AppointmentPage() {
         setHover(appointment.id);
     };
 
-
-
     const getStatusComponent = (status) => {
         switch (status) {
+            case 1:
+                return <p className='text-blue'>{AppointmentStatus.DONE}</p>;
+            case 2:
+                return <p className='text-green'>{AppointmentStatus.ONGOING}</p>;
             case 3:
                 return <p className='text-green'>{AppointmentStatus.SCHEDULED}</p>;
-            case 2:
-                return <p className='text-blue'>{AppointmentStatus.ONGOING}</p>;
-            case 1:
-                return <p className='text-green'>{AppointmentStatus.DONE}</p>;
-            // Thêm các trường hợp khác nếu cần
+            case 4:
+                return <p className='text-red'>{AppointmentStatus.REJECTED}</p>;
+            case 5:
+                return <p className='text-yellow'>{AppointmentStatus.PENDING}</p>;
+            case 6:
+                return <p className='text-green'>{AppointmentStatus.ONTREATMENT}</p>;
+            case 7:
+                return <p className='text-yellow'>{AppointmentStatus.QUEUED}</p>;
+            case 8:
+                return <p className='text-yellow'>{AppointmentStatus.WAITING}</p>;
             default:
                 return <p className='text-red'>{AppointmentStatus.CANCELLED}</p>;
         }
     };
 
+    const getStatusMeeting = (status) => {
+        switch (status) {
+            case 1:
+                return <p className='text-blue'>{MeetingStatus.DONE}</p>;
+            case 2:
+                return <p className='text-green'>{MeetingStatus.CHECKIN}</p>;
+            case 3:
+                return <p className='text-red'>{MeetingStatus.WAITING}</p>;
+            case 4:
+                return <p className='text-blue'>{MeetingStatus.FUTURE}</p>;
+            case 5:
+                return <p className='text-red'>{MeetingStatus.INQUEUED}</p>;
+            case 6:
+                return <p className='text-red'>{MeetingStatus.WAITINGDENTIST}</p>;
+            case 7:
+                return <p className='text-yellow'>{MeetingStatus.INTREATMENT}</p>;
+        }
+    };
 
     const handleDeleteAppointment = async (id) => {
-
+        // Add logic to handle appointment deletion here
     }
-
 
     return (
         <div className="row container">
             <div className="left col-md-5 col-sm-5 border-r-2 border-solid border-zinc">
-                <div className=''>
-                    {/* <form>
-                        <Input placeholder="Mã giao dịch, tên bệnh nhân" />
-                    </form> */}
-                </div>
-                <div className='appointment  '>
+                <div className='appointment'>
                     {appointments.map(appointment => (
                         <div key={appointment.id}
                             className={`item mt-8 flex justify-between p-4 hover:bg-slate-200 rounded-lg ${hover === appointment.id ? 'bg-zinc' : ''} cursor-pointer`}
@@ -127,19 +141,16 @@ export default function AppointmentPage() {
                             <div className='border border-solid border-binc rounded-md content-center p-2 font-bold '>
                                 <p className=''>{appointment.slotName}</p>
                             </div>
-
-
                         </div>
                     ))}
                 </div>
                 <div className='mt-5'>
                     <Stack spacing={2}>
                         <Pagination count={pageTotal} color="primary"
-                            page={currentPage} // Current active page
+                            page={currentPage}
                             onChange={handlePageChange} />
                     </Stack>
                 </div>
-
             </div>
             <div className="col-md-7 col-sm-7">
                 {details && (
@@ -166,30 +177,13 @@ export default function AppointmentPage() {
                                 <span className='text-lg'>Date</span>
                                 <span className='text-lg'>{details.date}</span>
                             </div>
-                            {/* <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Dịch vụ</span>
-                                <span className='text-lg'>{details.appointmentServices.serviceName}</span>
-                            </div>
-                            <div className='flex justify-between mt-4'>
-                                <span className='text-lg'>Bác sĩ</span>
-                                <span className='text-lg'>{details.dentistTreatmentName}</span>
-                            </div> */}
-                            {/* <div className='flex justify-end mt-5'>
-                                <Button color='primary' variant="outlined" onClick={() => handleDetailAppointment()}>Chi tiết</Button>
-                            </div> */}
-                            {/* </div> */}
-
-                            {/* <div className='ps-8 pe-8 pb-8'> */}
-                            {/* <h4 className='font-bold text-xl'>Thông tin bệnh nhân</h4> */}
                             <div className='flex justify-between mt-4'>
                                 <span className='text-lg'>Name</span>
                                 <span className='text-lg'>{details.patientName}</span>
-
                             </div>
                             <div className='flex justify-between mt-4'>
                                 <span className='text-lg'>Date of birth</span>
                                 <span className='text-lg'>{fDate(details.patientDateOfBirth)}</span>
-
                             </div>
                             <div className='flex justify-between mt-4'>
                                 <span className='text-lg'>Phone Number</span>
@@ -198,18 +192,12 @@ export default function AppointmentPage() {
                             <div className='flex justify-between mt-4'>
                                 <span className='text-lg'>Gender</span>
                                 <span className='text-lg'>{details.patientGender === 0 ? (
-                                    <span>
-                                        {GenderStatus.MALE}
-                                    </span>
+                                    <span>{GenderStatus.MALE}</span>
                                 ) : (
-                                    <span>
-                                        {GenderStatus.FEMALE}
-                                    </span>
+                                    <span>{GenderStatus.FEMALE}</span>
                                 )}</span>
-
                             </div>
                         </div>
-
                         <div className='ps-8 pe-8 pb-8'>
                             <h4 className='font-bold text-xl '>Service</h4>
                             {details.appointmentServices.map(service => (
@@ -219,55 +207,49 @@ export default function AppointmentPage() {
                                         <div className='flex justify-between'>
                                             <p className='text-lg'>{service.dentistName}</p>
                                             {service.meetings && service.meetings.length > 0 && (
-                                                <a className='text-lg ms-2 text-primary cursor-pointer' variant="outlined" onClick={handleClickOpen}>Re-examination</a>
+                                                <a className='text-lg ms-2 text-primary cursor-pointer' onClick={() => handleClickOpen(service)}>Examination</a>
                                             )}
-                                            <Dialog
-                                                fullScreen={fullScreen}
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="responsive-dialog-title">
-                                                <DialogTitle id="responsive-dialog-title ">
-                                                    {"Re-examination schedule"}
-                                                </DialogTitle>
-                                                <DialogContent>
-                                                    {service.meetings.map(meeting => (
-                                                        <div key={meeting.id}>
-                                                            <div className='flex justify-between mt-4'>
-                                                                <span className='text-lg'>Re-examination date</span>
-                                                                <span className='text-lg ms-8'>{fDate(meeting.date)}</span>
-                                                            </div>
-                                                            <div className='flex justify-between mt-4'>
-                                                                <span className='text-lg'>Meeting time</span>
-                                                                <span className='text-lg'>{meeting.meetingAttempt}</span>
-                                                            </div>
-                                                            <div className='flex justify-between mt-4 pb-4 border-b-2 border-solid border-zinc'>
-                                                                <span className='text-lg'>Status</span>
-                                                                <span className='text-lg text-primary'>{meeting.status === 0 ? (
-                                                                    <span>
-                                                                        Undone
+                                            {selectedService && selectedService.id === service.id && (
+                                                <Dialog
+                                                    fullScreen={fullScreen}
+                                                    open={open}
+                                                    onClose={handleClose}
+                                                    aria-labelledby="responsive-dialog-title">
+                                                    <DialogTitle id="responsive-dialog-title">
+                                                        Examination schedule
+                                                    </DialogTitle>
+                                                    <DialogContent>
+                                                        {selectedService.meetings.map(meeting => (
+                                                            <div key={meeting.id} style={{ marginBottom: '10px' }}>
+                                                                <div className='flex justify-between mt-4'>
+                                                                    <span className='text-lg'>Examination date</span>
+                                                                    <span className='text-lg ms-8'>{fDate(meeting.date)}</span>
+                                                                </div>
+                                                                <div className='flex justify-between mt-4'>
+                                                                    <span className='text-lg'>Dentist</span>
+                                                                    <span className='text-lg'>{meeting.dentistName}</span>
+                                                                </div>
+                                                                <div className='flex justify-between mt-4 pb-4 border-b-2 border-solid border-zinc'>
+                                                                    <span className='text-lg'>Status</span>
+                                                                    <span className='text-lg'>
+                                                                        {getStatusMeeting(meeting.status)}
                                                                     </span>
-                                                                ) : (
-                                                                    <span>
-                                                                        Done
-                                                                    </span>
-                                                                )}</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    ))}
-                                                </DialogContent>
-                                                <DialogActions>
-                                                    <Button onClick={handleClose} autoFocus>
-                                                        Close
-                                                    </Button>
-                                                </DialogActions>
-                                            </Dialog>
+                                                        ))}
+                                                    </DialogContent>
+                                                    <DialogActions>
+                                                        <Button onClick={handleClose} autoFocus>
+                                                            Close
+                                                        </Button>
+                                                    </DialogActions>
+                                                </Dialog>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             ))}
-
                         </div>
-
                         <div className='ps-8 pe-8 pb-8'>
                             <h4 className='font-bold text-xl mb-4'>Result</h4>
                             {details.result && (
@@ -276,8 +258,7 @@ export default function AppointmentPage() {
                                         {details.result.medicines.map(medicine => (
                                             <div key={medicine.id}>
                                                 <p className='text-lg'>Medicine</p>
-                                                <div ></div>
-
+                                                <div></div>
                                             </div>
                                         ))}
                                     </div>
@@ -310,13 +291,8 @@ export default function AppointmentPage() {
                             )}
                         </div>
                     </div>
-                )
-                }
-
-            </div >
-        </div >
-
-
+                )}
+            </div>
+        </div>
     )
 }
-
