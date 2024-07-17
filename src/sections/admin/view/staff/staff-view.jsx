@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Popconfirm, Button, Alert, Modal, Form, Input, DatePicker, Select } from 'antd';
+import { Table, Popconfirm, Button, Alert, Modal, Form, Input, DatePicker, Select, message } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { fDate } from 'src/utils/format-time';
@@ -38,6 +38,7 @@ export default function StaffPage() {
                 if (response.data.statusCode === 200) {
                     setStaffs(response.data.data);
                 } else {
+                    message.error(response.data.message);
                     console.error('Failed to fetch services:', response.data.message);
                 }
             }).catch(error => console.error('Error fetching services:', error));
@@ -119,6 +120,7 @@ export default function StaffPage() {
                     }, 3000);
                     fetchDetails();
                 } else {
+                    message.error(response.data.message);
                     console.error('Failed to delete staff:', response.data.message);
                 }
             }).catch(error => console.error('Error deleting staff:', error));
@@ -143,6 +145,7 @@ export default function StaffPage() {
                         setStaffUpdate(null)
                         fetchDetails();
                     } else {
+                        message.error(response.data.message);
                         console.error('Failed to update staff:', response.data.message);
                     }
                 }).catch(error => console.error('Error updating staff:', error));
@@ -179,6 +182,7 @@ export default function StaffPage() {
                         }, 3000);
                         fetchDetails();
                     } else {
+                        message.error(response.data.message);
                         console.error('Failed to add staff:', response.data.message);
                     }
                 }).catch(error => console.error('Error adding staff:', error));

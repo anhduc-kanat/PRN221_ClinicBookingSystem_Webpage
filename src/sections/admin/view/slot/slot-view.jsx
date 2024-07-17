@@ -19,6 +19,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Iconify from "src/components/iconify";
+import { message } from "antd";
 
 const apiRoot = import.meta.env.VITE_API_ROOT;
 
@@ -46,11 +47,17 @@ export default function SlotManagementView() {
     const fetchSlots = () => {
         axios.get(`${apiRoot}/slot/get-all-slots`)
             .then(res => {
-                console.log(res.data);
-                setSlots(res.data.data);
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    console.log(res.data);
+                    setSlots(res.data.data);
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error at fetch Slots:", error.message);
+                message.error(error.response.data.error);
             });
     };
 
@@ -74,7 +81,7 @@ export default function SlotManagementView() {
     const handleOpenEditSlot = (slot) => {
         const [startHour, startMinute] = slot.startAt.split(':');
         const [endHour, endMinute] = slot.endAt.split(':');
-        
+
         setSelectedSlot({
             ...slot,
             startAtHour: startHour,
@@ -117,45 +124,63 @@ export default function SlotManagementView() {
     const handleSaveNewSlot = () => {
         axios.post(`${apiRoot}/slot/create-slot`, newSlot)
             .then(res => {
-                console.log("Slot created:", res.data);
-                setNewSlot({
-                    name: "",
-                    description: "",
-                    startAtHour: "",
-                    startAtMinute: "",
-                    endAtHour: "",
-                    endAtMinute: ""
-                });
-                fetchSlots();
-                handleCloseAddSlot();
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    console.log("Slot created:", res.data);
+                    setNewSlot({
+                        name: "",
+                        description: "",
+                        startAtHour: "",
+                        startAtMinute: "",
+                        endAtHour: "",
+                        endAtMinute: ""
+                    });
+                    fetchSlots();
+                    handleCloseAddSlot();
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error creating slot:", error.message);
+                message.error(error.response.data.error);
             });
     };
 
     const handleSaveEditSlot = () => {
-        
+
         axios.put(`${apiRoot}/slot/update-slot/${selectedSlot.id}`, selectedSlot)
             .then(res => {
-                console.log("Slot updated:", res.data);
-                fetchSlots();
-                handleCloseEditSlot();
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    console.log("Slot updated:", res.data);
+                    fetchSlots();
+                    handleCloseEditSlot();
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error updating slot:", error.message);
+                message.error(error.response.data.error);
             });
     };
 
     const handleDeleteSlot = () => {
         axios.delete(`${apiRoot}/slot/delete-slot/${selectedSlot.id}`)
             .then(res => {
-                console.log("Slot deleted:", res.data);
-                fetchSlots();
-                handleCloseDeleteSlot();
+                if (res.data.statusCode === 200 || res.data.statusCode === 201) {
+                    console.log("Slot deleted:", res.data);
+                    fetchSlots();
+                    handleCloseDeleteSlot();
+                    message.success(res.data.message);
+                } else {
+                    message.error(res.data.message);
+                }
             })
             .catch(error => {
                 console.log("Error deleting slot:", error.message);
+                message.error(error.response.data.error);
             });
     };
 
