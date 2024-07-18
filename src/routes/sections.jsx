@@ -48,7 +48,8 @@ export const StaffManagementPage = lazy(()=> import('src/pages/Admin/StaffManage
 export const SpecificationManagementPage = lazy(() => import('src/pages/Admin/SpecificationManagementPage'));
 
 export const AppointmentPage = lazy(() => import('src/pages/appointment'))
-
+export const StaffProfile = lazy(() => import('src/pages/Staff/StaffProfile'));
+export const ViewTransaction = lazy(() => import('src/pages/Staff/ViewTransaction'));
 
 // ----------------------------------------------------------------------
 
@@ -183,8 +184,9 @@ export default function Router() {
       ),
       children: [
         { element: <AppointmentPage />, index: true },
-        { path: 'appointment', element: <AppointmentPage /> }
-        
+        { path: 'appointment', element: <AppointmentPage /> },
+        { path: 'profile', element: <StaffProfile /> },
+        {path: 'transaction', element: <ViewTransaction />}
       ],
              
     }
