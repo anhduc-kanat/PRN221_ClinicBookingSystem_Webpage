@@ -112,6 +112,22 @@ export default function ServiceManagementView() {
     }
 
     const handleSaveNewService = () => {
+        const { name, description, expectedDurationInMinute, price, serviceType } = newService;
+
+        if (!name || !description || !expectedDurationInMinute || !price || !serviceType) {
+            message.error("All fields are required");
+            return;
+        }
+
+        if (price <= 0) {
+            message.error("Price must be greater than 0");
+            return;
+        }
+
+        if (expectedDurationInMinute <= 0) {
+            message.error("Expected duration must be greater than 0");
+            return;
+        }
         axios.post(`${apiRoot}/service/create-service`, newService)
             .then(res => {
                 if (res.data.statusCode === 200 || res.data.statusCode === 201) {
@@ -135,6 +151,22 @@ export default function ServiceManagementView() {
     }
 
     const handleSaveEditService = () => {
+        const { name, description, expectedDurationInMinute, price, serviceType } = newService;
+
+        if (!name || !description || !expectedDurationInMinute || !price || !serviceType) {
+            message.error("All fields are required");
+            return;
+        }
+
+        if (price <= 0) {
+            message.error("Price must be greater than 0");
+            return;
+        }
+
+        if (expectedDurationInMinute <= 0) {
+            message.error("Expected duration must be greater than 0");
+            return;
+        }
         axios.put(`${apiRoot}/service/update-service/${selectedService.id}`, selectedService)
             .then(res => {
                 if (res.data.statusCode === 200 || res.data.statusCode === 201) {
@@ -198,7 +230,7 @@ export default function ServiceManagementView() {
                                         <TableCell>{service.name}</TableCell>
                                         <TableCell>{service.description}</TableCell>
                                         <TableCell>{service.expectedDurationInMinute}</TableCell>
-                                        <TableCell>{service.price}</TableCell>
+                                        <TableCell>{service.price.toLocaleString()}</TableCell>
                                         <TableCell>
                                             {service.serviceType === 1 ? "Khám" : "Điều trị"}
                                         </TableCell>
