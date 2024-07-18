@@ -41,7 +41,7 @@ export default function BookingPage() {
     const [profileData, setProfileData] = useState([]);
 
     // const [selectedDentistName, setSelectedDentistName] = useState([])
-    
+
     useEffect(() => {
 
         console.log("API Root: ", apiRoot);
@@ -55,18 +55,18 @@ export default function BookingPage() {
                 }
             }).catch(error => console.error('Error fetching services:', error));
     }, []);
-    
+
     const handleDisableDates = ({ date, view }) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         if (date < today) {
-          return true;
-        }    
+            return true;
+        }
         // Disable specific dates
         if (view === 'month') {
             return disabledDates.some(disabledDate =>
                 date.getFullYear() === disabledDate.getFullYear() &&
-                date.getMonth() === disabledDate.getMonth() - 1&&
+                date.getMonth() === disabledDate.getMonth() - 1 &&
                 date.getDate() === disabledDate.getDate()
             );
         }
@@ -113,11 +113,7 @@ export default function BookingPage() {
         setShowServices(false);
         setShowDentists(true)
         setShowDentistStage(true);
-        axios.get(`${apiRoot}/dentist/get-dentist-service`, {
-            params: {
-                serviceName: service.name
-            }
-        })
+        axios.get(`${apiRoot}/dentist/get-dentist-service/${service.id}`)
             .then(response => {
                 console.log("Response data: ", response.data)
                 if (response.data.statusCode === 200) {
