@@ -179,8 +179,9 @@ export default function Router() {
         </StaffLayout>
       ),
       children: [
-        { element: <IndexPage />, index: true },
+        { element: <AppointmentPage />, index: true },
         { path: 'appointment', element: <AppointmentPage /> }
+        
       ],
              
     }
