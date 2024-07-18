@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Table } from 'antd';
+import { Table, Modal, Button } from 'antd';
 import axios from 'axios';
 import { fDate } from 'src/utils/format-time';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import TransactionStatus from 'src/enum/transaction-enum';
 const apiRoot = import.meta.env.VITE_API_ROOT;
 
 export default function PaymentHistoryPage() {
     const [payments, setPayments] = useState([]);
+    const [pdfUrl, setPdfUrl] = useState(null);
+    const [open, setOpen] = useState(false);
+
+
+
+
+    
+
 
     const token = localStorage.getItem("accessToken");
 
@@ -77,15 +89,23 @@ export default function PaymentHistoryPage() {
             title: 'Service',
             dataIndex: 'serviceName',
             render: (text) => <div className="whitespace-pre-wrap">{text}</div>
+        },
+        {
+            title: 'Amount',
+            dataIndex: 'amount',
+            render: (text, record) => (
+                <span>{parseFloat(text).toLocaleString('en-US', { style: 'currency', currency: 'VND' })}</span>
+              ),
         }
     ];
 
     const data = payments.map(payment => ({
         ...payment,
         payDate: fDate(payment.payDate),
-        status : getStatusTransaction(payment.status),
+        status: getStatusTransaction(payment.status),
         userAccountName: payment.appointment.userAccountName,
-        serviceName: payment.appointment.appointment.map(service => service.serviceName).join('\n')
+        serviceName: payment.appointment.appointment.map(service => service.serviceName).join('\n'),
+        amount : payment.amount
     }));
     return (
         <>
@@ -95,6 +115,7 @@ export default function PaymentHistoryPage() {
                     dataSource={data}
                 />
             </div>
+
         </>
     );
 }

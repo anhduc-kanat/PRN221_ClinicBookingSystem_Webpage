@@ -7,11 +7,11 @@ const icon = (name) => (
 );
 
 const navConfig = [
-  {
-    title: 'dashboard',
-    path: '/staff/appointment',
-    icon: icon('ic_analytics'),
-  },
+  // {
+  //   title: 'dashboard',
+  //   path: '/staff/appointment',
+  //   icon: icon('ic_analytics'),
+  // },
   {
     title: 'user',
     path: '/staff/appointment',

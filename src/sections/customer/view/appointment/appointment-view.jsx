@@ -120,29 +120,35 @@ export default function AppointmentPage() {
         <div className="row container">
             <div className="left col-md-5 col-sm-5 border-r-2 border-solid border-zinc">
                 <div className='appointment'>
-                    {appointments.map(appointment => (
-                        <div key={appointment.id}
-                            className={`item mt-8 flex justify-between p-4 hover:bg-slate-200 rounded-lg ${hover === appointment.id ? 'bg-zinc' : ''} cursor-pointer`}
-                            onClick={() => handleClick(appointment)} >
-                            <div>
+                    {appointments.length > 0 ? (
+                        appointments.map(appointment => (
+                            <div key={appointment.id}
+                                className={`item mt-8 flex justify-between p-4 hover:bg-slate-200 rounded-lg ${hover === appointment.id ? 'bg-zinc' : ''} cursor-pointer`}
+                                onClick={() => handleClick(appointment)} >
                                 <div>
-                                    <h3 className='font-bold text-xl'>Zouzou Clinic</h3>
+                                    <div>
+                                        <h3 className='font-bold text-xl'>Zouzou Clinic</h3>
+                                    </div>
+                                    <div className=''>
+                                        <span>{appointment.startAt} / {appointment.date}</span>
+                                    </div>
+                                    <div>
+                                        <span>{appointment.userTreatmentName}</span>
+                                    </div>
+                                    <div className='mt-2 ms-2'>
+                                        {getStatusComponent(appointment.status)}
+                                    </div>
                                 </div>
-                                <div className=''>
-                                    <span>{appointment.startAt} / {appointment.date}</span>
-                                </div>
-                                <div>
-                                    <span>{appointment.userTreatmentName}</span>
-                                </div>
-                                <div className='mt-2 ms-2'>
-                                    {getStatusComponent(appointment.status)}
+                                <div className='border border-solid border-binc rounded-md content-center p-2 font-bold '>
+                                    <p className=''>{appointment.slotName}</p>
                                 </div>
                             </div>
-                            <div className='border border-solid border-binc rounded-md content-center p-2 font-bold '>
-                                <p className=''>{appointment.slotName}</p>
-                            </div>
+                        ))
+                    ) : (
+                        <div className='mt-8 p-4 rounded-lg'>
+                            <img className='mx-auto max-w-full h-auto' src="/WaitingResult.png" alt="Placeholder" />
                         </div>
-                    ))}
+                    )}
                 </div>
                 <div className='mt-5'>
                     <Stack spacing={2}>

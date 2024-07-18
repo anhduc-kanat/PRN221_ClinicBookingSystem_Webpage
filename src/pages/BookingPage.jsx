@@ -58,8 +58,11 @@ export default function BookingPage() {
 
     const handleDisableDates = ({ date, view }) => {
         const today = new Date();
+        const twoMonthsLater = new Date();
+        twoMonthsLater.setMonth(today.getMonth() + 2);
+        twoMonthsLater.setHours(0, 0, 0, 0);
         today.setHours(0, 0, 0, 0);
-        if (date < today) {
+        if (date < today || date > twoMonthsLater) {
             return true;
         }
         // Disable specific dates
@@ -70,6 +73,7 @@ export default function BookingPage() {
                 date.getDate() === disabledDate.getDate()
             );
         }
+        
         return false;
     };
 
