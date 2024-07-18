@@ -131,7 +131,6 @@ export default function DentistPage() {
     };
 
     const handleUpdate = () => {
-        setIsModal(false);
         form.validateFields().then(values => {
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phonePattern = /^\d{10}$/;
@@ -177,6 +176,7 @@ export default function DentistPage() {
                         }, 3000);
                         setDentistUpdate(null)
                         fetchDetails();
+                        setIsModal(false);
                     } else {
                         message.error(response.data.message);
                         console.error('Failed to update dentist:', response.data.message);
@@ -232,6 +232,7 @@ export default function DentistPage() {
                     }, 3000);
                     setDentistUpdate(null)
                     fetchDetails();
+                    setIsModal(false);
                 } else {
                     message.error(response.data.message);
                     console.error('Failed to add dentist:', response.data.message);
