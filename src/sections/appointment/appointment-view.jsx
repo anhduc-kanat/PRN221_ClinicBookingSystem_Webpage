@@ -212,9 +212,11 @@ export default function AppointmentTablePage() {
                 headLabel={[
                   { id: 'patientName', label: 'Name Patient' },
                   { id: 'patientPhoneNumber', label: 'Phone' },
-                  { id: 'date', label: 'Visit Date', align: 'center' },
-                  { id: 'startAt', label: 'Time Range', align: 'center' },
-                  { id: 'isFullyPaid', label: 'Paid' },
+                  { id: 'date', label: 'Visit Date' },
+                  { id: 'startAt', label: 'Time Range' },
+                  { id: 'slot', label: 'Slot' },
+                  { id: 'isClinicalExamPaid', label: 'Pre-medical paid' },
+                  { id: 'isFullyPaid', label: 'Fully Paid Service'},
                   { id: '' },
                 ]}
               />
@@ -233,6 +235,7 @@ export default function AppointmentTablePage() {
                       endAt={row.endAt}
                       status={row.status}
                       isFullyPaid={row.isFullyPaid}
+                      isClinicalExamPaid = {row.isClinicalExamPaid}
                       //
 
                       appointmentServices={row.appointmentServices}

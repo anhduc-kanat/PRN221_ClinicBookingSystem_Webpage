@@ -11,7 +11,7 @@ export const getStatusText = (statusMeeting) => {
       case 5:
         return 'InQueue';
       case 7: 
-        return 'InTreatment';
+        return 'Treating';
       default:
         return 'Unknown';
     }
@@ -36,4 +36,15 @@ export const formatCurrency = (amount) =>{
     return "0";
   }
   return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " đ";
+};
+export const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '70%',
+  borderRadius: '30px',
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
 };
