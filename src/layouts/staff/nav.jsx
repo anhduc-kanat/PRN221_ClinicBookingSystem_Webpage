@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -29,6 +30,8 @@ export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
 
   const upLg = useResponsive('up', 'lg');
+
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     if (openNav) {
@@ -70,6 +73,9 @@ export default function Nav({ openNav, onCloseNav }) {
     </Stack>
   );
 
+  const handleBackToHomePage = () => {
+    navigate('/');
+  }
   
   const renderContent = (
     <Scrollbar
@@ -83,7 +89,7 @@ export default function Nav({ openNav, onCloseNav }) {
       }}
     >
       <div style={{padding:'20px 20px 0'}}>
-        <img src="/logo.png" alt="logo" width={40} height={40} />
+        <img src="/logo.png" alt="logo" width={40} height={40} onClick={handleBackToHomePage} />
       </div>
 
       {renderAccount}
