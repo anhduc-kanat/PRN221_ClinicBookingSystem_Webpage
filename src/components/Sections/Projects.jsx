@@ -3,9 +3,20 @@ import styled from "styled-components";
 // Components
 import ProjectBox from "../Elements/ProjectBox";
 import FullButton from "../Buttons/FullButton";
+import { useNavigate } from "react-router-dom";
 // Assets
 
 export default function Projects() {
+  const navigate = useNavigate();
+
+  const handleNavigateService = () => {
+    navigate('/service');
+  }
+
+  const handleNavigateContact = () => {
+    navigate('/contact');
+  }
+
   return (
     <Wrapper id="projects">
       <div className="whiteBg">
@@ -72,7 +83,7 @@ export default function Projects() {
           </div>
           <div className="row flexCenter">
             <div style={{ margin: "50px 0", width: "200px" }}>
-              <FullButton title="Load More" action={() => alert("clicked")} />
+              <FullButton title="Load More" action={handleNavigateService} />
             </div>
           </div>
         </div>
@@ -98,7 +109,7 @@ export default function Projects() {
                   <FullButton title="Get Started" action={() => alert("clicked")} />
                 </div>
                 <div style={{ width: "190px", marginLeft: "15px" }}>
-                  <FullButton title="Contact Us" action={() => alert("clicked")} border />
+                  <FullButton title="Contact Us" action={handleNavigateContact} border />
                 </div>
               </ButtonsRow>
             </AddRight>

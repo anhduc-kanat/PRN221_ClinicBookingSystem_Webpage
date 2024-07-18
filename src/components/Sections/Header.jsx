@@ -8,8 +8,21 @@ import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 import './sections.css'
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
+  const navigate = useNavigate();
+
+  const handleBookingbtn = () => {
+    const accessToken = localStorage.getItem("accessToken");
+    console.log("accessToken: ", accessToken);
+    if (accessToken === undefined || accessToken === null) {
+      navigate('/login');
+    } else {
+      navigate('/booking');
+    }
+  }
+
   return (
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
@@ -19,7 +32,7 @@ export default function Header() {
           Our clinic specializes in dental treatment. Trust in our expertise and care. Your smile is our happiness, and we are dedicated to making sure you leave with the best one possible. Don't wait any longer—schedule your appointment below."
           </HeaderP>
           <BtnWrapper>
-            <Button className="btnBooking">Booking</Button>
+            <Button className="btnBooking" onClick={handleBookingbtn}>Booking</Button>
           </BtnWrapper>
         </div>
       </LeftSide>

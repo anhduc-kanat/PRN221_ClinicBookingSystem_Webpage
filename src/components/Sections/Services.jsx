@@ -11,8 +11,15 @@ import AddImage3 from "../../assets/img/add/3.png";
 import AddImage4 from "../../assets/img/add/4.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTeeth, faTooth, faTeethOpen, faGrinSquint } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 export default function Services() {
+  const navigate = useNavigate();
+
+  const handleNavigateContact = () => {
+    navigate('/contact');
+  }
+
   return (
     <Wrapper id="services">
       <div className="lightBg" style={{ padding: "50px 0" }}>
@@ -74,7 +81,7 @@ export default function Services() {
                     <FullButton title="Get Started" action={() => alert("clicked")} />
                   </div>
                   <div style={{ width: "190px", marginLeft: "15px" }}>
-                    <FullButton title="Contact Us" action={() => alert("clicked")} border />
+                    <FullButton title="Contact Us" action={handleNavigateContact} border />
                   </div>
                 </ButtonsRow>
               </AddLeft>
