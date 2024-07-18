@@ -122,6 +122,16 @@ export default function SlotManagementView() {
     };
 
     const handleSaveNewSlot = () => {
+        const { name, description, startAtHour, startAtMinute, endAtHour, endAtMinute} = newSlot;
+
+        if (!name || !description || !startAtHour || !startAtMinute || !endAtHour || !endAtMinute) {
+            message.error("All fields are required");
+            return;
+        }
+        if (parseInt(startAtHour, 10) > parseInt(endAtHour, 10)) {
+            message.error("Start hour must be smaller or equal to end hour");
+            return;
+        }
         axios.post(`${apiRoot}/slot/create-slot`, newSlot)
             .then(res => {
                 if (res.data.statusCode === 200 || res.data.statusCode === 201) {
@@ -148,6 +158,16 @@ export default function SlotManagementView() {
     };
 
     const handleSaveEditSlot = () => {
+        const { name, description, startAtHour, startAtMinute, endAtHour, endAtMinute} = selectedSlot;
+
+        if (!name || !description || !startAtHour || !startAtMinute || !endAtHour || !endAtMinute) {
+            message.error("All fields are required");
+            return;
+        }
+        if (parseInt(startAtHour, 10) > parseInt(endAtHour, 10)) {
+            message.error("Start hour must be smaller or equal to end hour");
+            return;
+        }
 
         axios.put(`${apiRoot}/slot/update-slot/${selectedSlot.id}`, selectedSlot)
             .then(res => {

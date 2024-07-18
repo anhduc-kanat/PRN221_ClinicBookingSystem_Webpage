@@ -45,6 +45,8 @@ export const ServiceManagementPage = lazy(() => import('src/pages/Admin/ServiceM
 export const SlotManagementPage = lazy(() => import('src/pages/Admin/SlotManagementPage'));
 export const DentistManagementPage = lazy(()=> import('src/pages/Admin/DentistManagementPage'))
 export const StaffManagementPage = lazy(()=> import('src/pages/Admin/StaffManagementPage'))
+export const SpecificationManagementPage = lazy(() => import('src/pages/Admin/SpecificationManagementPage'));
+
 export const AppointmentPage = lazy(() => import('src/pages/appointment'))
 
 
@@ -115,6 +117,7 @@ export default function Router() {
         { path: 'staff', element: <StaffManagementPage /> },
         { path: 'service', element: <ServiceManagementPage /> },
         { path: 'slot', element: <SlotManagementPage /> },
+        { path: 'specification', element: <SpecificationManagementPage /> }
       ],
     },
     {

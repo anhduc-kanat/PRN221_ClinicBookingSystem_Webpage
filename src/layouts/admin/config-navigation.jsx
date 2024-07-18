@@ -26,6 +26,10 @@ const navConfig = [
     title: 'Slot Management',
     path: '/admin/slot',
   },
+  {
+    title: 'Specification Management',
+    path: '/admin/specification',
+  },
 ];
 
 export default navConfig;

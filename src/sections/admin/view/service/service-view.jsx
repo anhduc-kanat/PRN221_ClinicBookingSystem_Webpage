@@ -128,6 +128,7 @@ export default function ServiceManagementView() {
             message.error("Expected duration must be greater than 0");
             return;
         }
+        
         axios.post(`${apiRoot}/service/create-service`, newService)
             .then(res => {
                 if (res.data.statusCode === 200 || res.data.statusCode === 201) {
@@ -151,7 +152,7 @@ export default function ServiceManagementView() {
     }
 
     const handleSaveEditService = () => {
-        const { name, description, expectedDurationInMinute, price, serviceType } = newService;
+        const { name, description, expectedDurationInMinute, price, serviceType } = selectedService;
 
         if (!name || !description || !expectedDurationInMinute || !price || !serviceType) {
             message.error("All fields are required");
@@ -167,6 +168,7 @@ export default function ServiceManagementView() {
             message.error("Expected duration must be greater than 0");
             return;
         }
+        
         axios.put(`${apiRoot}/service/update-service/${selectedService.id}`, selectedService)
             .then(res => {
                 if (res.data.statusCode === 200 || res.data.statusCode === 201) {
@@ -357,6 +359,7 @@ export default function ServiceManagementView() {
                         value={selectedService?.expectedDurationInMinute}
                         onChange={handleChangeEdit}
                         required
+                        
                     />
                     <TextField
                         margin="dense"
