@@ -1,0 +1,1 @@
+export { default as  GetPaymentHistoryPage } from './view-stranc';

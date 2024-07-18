@@ -48,3 +48,7 @@ export const style = {
   boxShadow: 24,
   p: 4,
 };
+export const formatDate = (yyyyMMdd) => {
+  const parts = yyyyMMdd.split('-');
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
