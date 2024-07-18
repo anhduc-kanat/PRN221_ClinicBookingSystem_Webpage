@@ -22,7 +22,7 @@ export function Login() {
   const { isLoading } = useSelector((state) => state.user); // Accessing loading state from Redux store
   const SignUpSchema = z.object({
     phoneNumber: z.string().min(4).max(15),
-    password: z.string().min(3).max(20),
+    password: z.string().min(3).max(40),
   });
   // Setting up form handling with validation
   const { register, handleSubmit } = useForm({ resolver: zodResolver(SignUpSchema) });

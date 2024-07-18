@@ -346,52 +346,55 @@ export default function AppointmentTablePage() {
               </div>
             </form>
 
-            <input
-              className="border rounded-md px-3 py-1 text-neutral-500 w-1/5 mr-5"
-              placeholder="filter theo ngày"
-              type="date"
-              value={dateFilter}
-              onChange={(event) => {
-                setDateFilter(event.target.value);
-                console.log(event.target.value);
-              }}
-            />
-          </div>
-          <Scrollbar>
-            <TableContainer sx={{ overflow: 'unset' }}>
-              <Table sx={{ minWidth: 800 }}>
-                <AppointmentTableHead
-                  order={order}
-                  orderBy={orderBy}
-                  rowCount={appointments.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleSort}
-                  onSelectAllClick={handleSelectAllClick}
-                  headLabel={[
-                    { id: 'patientName', label: 'Name Patient' },
-                    { id: 'patientPhoneNumber', label: 'Phone' },
-                    { id: 'date', label: 'Visit Date', align: 'center' },
-                    { id: 'startAt', label: 'Time Range', align: 'center' },
-                    { id: 'isFullyPaid', label: 'Paid' },
-                    { id: '' },
-                  ]}
-                />
-                <TableBody>
-                  {appointments
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <AppointmentTableRow
-                        key={row.id}
-                        id={row.id}
-                        patientName={row.patientName}
-                        patientPhoneNumber={row.patientPhoneNumber}
-                        slotName={row.slotName}
-                        date={row.date}
-                        startAt={row.startAt}
-                        endAt={row.endAt}
-                        status={row.status}
-                        isFullyPaid={row.isFullyPaid}
-                        //
+          <input
+            className="border rounded-md px-3 py-1 text-neutral-500 w-1/5 mr-5"
+            placeholder="filter theo ngày"
+            type="date"
+            value={dateFilter}
+            onChange={(event) => {
+              setDateFilter(event.target.value);
+              console.log(event.target.value);
+            }}
+          />
+        </div>
+        <Scrollbar>
+          <TableContainer sx={{ overflow: 'unset' }}>
+            <Table sx={{ minWidth: 800 }}>
+              <AppointmentTableHead
+                order={order}
+                orderBy={orderBy}
+                rowCount={appointments.length}
+                numSelected={selected.length}
+                onRequestSort={handleSort}
+                onSelectAllClick={handleSelectAllClick}
+                headLabel={[
+                  { id: 'patientName', label: 'Name Patient' },
+                  { id: 'patientPhoneNumber', label: 'Phone' },
+                  { id: 'date', label: 'Visit Date' },
+                  { id: 'startAt', label: 'Time Range' },
+                  { id: 'slot', label: 'Slot' },
+                  { id: 'isClinicalExamPaid', label: 'Pre-medical paid' },
+                  { id: 'isFullyPaid', label: 'Fully Paid Service'},
+                  { id: '' },
+                ]}
+              />
+              <TableBody>
+                {appointments
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <AppointmentTableRow
+                      key={row.id}
+                      id = {row.id}
+                      patientName={row.patientName}
+                      patientPhoneNumber={row.patientPhoneNumber}
+                      slotName={row.slotName}
+                      date={row.date}
+                      startAt={row.startAt}
+                      endAt={row.endAt}
+                      status={row.status}
+                      isFullyPaid={row.isFullyPaid}
+                      isClinicalExamPaid = {row.isClinicalExamPaid}
+                      //
 
                         appointmentServices={row.appointmentServices}
                         dentistTreatmentName={row.dentistTreatmentName}

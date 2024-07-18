@@ -116,11 +116,7 @@ export default function BookingPage() {
         setShowServices(false);
         setShowDentists(true)
         setShowDentistStage(true);
-        axios.get(`${apiRoot}/dentist/get-dentist-service`, {
-            params: {
-                serviceName: service.name
-            }
-        })
+        axios.get(`${apiRoot}/dentist/get-dentist-service/${service.id}`)
             .then(response => {
                 console.log("Response data: ", response.data)
                 if (response.data.statusCode === 200) {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
@@ -17,13 +17,13 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { account } from 'src/_mock/account';
 
-import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 import navConfig from './config-navigation';
 
 // ----------------------------------------------------------------------
+const profile = JSON.parse(localStorage.getItem('profile'));
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
@@ -53,7 +53,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Avatar src={account.photoURL} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
+        <Typography variant="subtitle2">{profile.lastName} {profile.firstName}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {account.role}
@@ -70,34 +70,34 @@ export default function Nav({ openNav, onCloseNav }) {
     </Stack>
   );
 
-  const renderUpgrade = (
-    <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-      <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-        <Box
-          component="img"
-          src="/assets/illustrations/illustration_avatar.png"
-          sx={{ width: 100, position: 'absolute', top: -50 }}
-        />
+  // const renderUpgrade = (
+  //   <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
+  //     <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
+  //       <Box
+  //         component="img"
+  //         src="/assets/illustrations/illustration_avatar.png"
+  //         sx={{ width: 100, position: 'absolute', top: -50 }}
+  //       />
 
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h6">Get more?</Typography>
+  //       <Box sx={{ textAlign: 'center' }}>
+  //         <Typography variant="h6">Get more?</Typography>
 
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-            From only $69
-          </Typography>
-        </Box>
+  //         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+  //           From only $69
+  //         </Typography>
+  //       </Box>
 
-        <Button
-          href="https://material-ui.com/store/items/minimal-dashboard/"
-          target="_blank"
-          variant="contained"
-          color="inherit"
-        >
-          Upgrade to Pro
-        </Button>
-      </Stack>
-    </Box>
-  );
+  //       <Button
+  //         href="https://material-ui.com/store/items/minimal-dashboard/"
+  //         target="_blank"
+  //         variant="contained"
+  //         color="inherit"
+  //       >
+  //         Upgrade to Pro
+  //       </Button>
+  //     </Stack>
+  //   </Box>
+  // );
 
   const renderContent = (
     <Scrollbar
@@ -110,7 +110,9 @@ export default function Nav({ openNav, onCloseNav }) {
         },
       }}
     >
-      <Logo sx={{ mt: 3, ml: 4 }} />
+      <div style={{ padding: '20px 20px 0' }}>
+        <img src="/logo.png" alt="logo" width={40} height={40} />
+      </div>
 
       {renderAccount}
 
@@ -118,7 +120,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <Box sx={{ flexGrow: 1 }} />
 
-      {renderUpgrade}
+      {/* {renderUpgrade} */}
     </Scrollbar>
   );
 

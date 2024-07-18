@@ -18,9 +18,9 @@ export default function HomePage() {
       <Header />
       <Services />
       <Projects />
-      <Blog />
+      {/* <Blog />
       <Pricing />
-      <Contact />
+      <Contact /> */}
       <Footer />
     </>
   );
