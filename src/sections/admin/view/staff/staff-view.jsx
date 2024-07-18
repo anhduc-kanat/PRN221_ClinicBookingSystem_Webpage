@@ -131,6 +131,18 @@ export default function StaffPage() {
     const handleUpdate = () => {
         setIsModal(false);
         form.validateFields().then(values => {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phonePattern = /^\d{10}$/;
+
+            if (!emailPattern.test(values.email)) {
+                message.error('The input is not a valid E-mail!');
+                return;
+            }
+
+            if (!phonePattern.test(values.phoneNumber)) {
+                message.error('Phone number must be exactly 10 digits!');
+                return;
+            }
             let formattedDateOfBirth = null;
             if (values.dateOfBirth) {
                 const momentDate = values.dateOfBirth;
@@ -166,6 +178,18 @@ export default function StaffPage() {
 
     const handleAdd = () => {
         form.validateFields().then(values => {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phonePattern = /^\d{10}$/;
+
+            if (!emailPattern.test(values.email)) {
+                message.error('The input is not a valid E-mail!');
+                return;
+            }
+
+            if (!phonePattern.test(values.phoneNumber)) {
+                message.error('Phone number must be exactly 10 digits!');
+                return;
+            }
             let formattedDateOfBirth = null;
             if (values.dateOfBirth) {
                 const momentDate = values.dateOfBirth;
