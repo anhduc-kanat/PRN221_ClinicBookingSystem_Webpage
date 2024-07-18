@@ -21,10 +21,14 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import Iconify from 'src/components/iconify';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
 import { getStatusText } from 'src/sections/appointment/helper';
 import { getStatusClasses } from 'src/sections/appointment/helper';
-import {formatCurrency} from 'src/sections/appointment/helper';
+import { formatCurrency } from 'src/sections/appointment/helper';
 // ----------------------------------------------------------------------
 
 const token = localStorage.getItem('accessToken');
@@ -71,6 +75,8 @@ export default function AppointmentTableRow({
   const [dentists, setDentists] = useState([]);
   const [serviceBusinessId, setServiceBusinessId] = useState(appointmentServices[0].id);
   const [meetingId, setMeetingId] = useState();
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfOpen, setPdfOpen] = useState(false);
 
   const style = {
     position: 'absolute',
@@ -219,7 +225,7 @@ export default function AppointmentTableRow({
             'Authorization': `Bearer ${token}`,
           },
         }
-      );     
+      );
       if (response.status === 200) {
         console.log('Meeting status updated successfully:', response.data);
       } else {
@@ -254,6 +260,32 @@ export default function AppointmentTableRow({
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
+  };
+
+  const handlePrintPdf = (appointmentId) => {
+    axios
+      .get(`${apiRoot}/billing/generate-pdf`, {
+        params: {
+          appointmentId: appointmentId, // Đảm bảo rằng appointmentId đã được cung cấp chính xác
+        },
+        responseType: 'blob', // Yêu cầu dữ liệu trả về là blob
+      })
+      .then((response) => {
+        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        setPdfUrl(pdfUrl);
+        setPdfOpen(true);
+      })
+      .catch((error) => {
+        console.error('Error fetching PDF:', error);
+        alert('Failed to fetch PDF.');
+      });
+  };
+
+  const handleClosePDF = () => {
+    URL.revokeObjectURL(pdfUrl);
+    setPdfOpen(false);
+    setPdfUrl(null);
   };
   return (
     <>
@@ -312,7 +344,7 @@ export default function AppointmentTableRow({
         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         PaperProps={{
-          sx: { width: 140 },
+          sx: { width: 200 },
         }}
       >
         <MenuItem onClick={handleOpenEditModal}>
@@ -322,6 +354,10 @@ export default function AppointmentTableRow({
         <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
+        </MenuItem>
+        <MenuItem onClick={() => handlePrintPdf(id)} sx={{}}>
+          <Iconify icon="mingcute:pdf-line" sx={{ mr: 2 }} />
+          Generate Pdf
         </MenuItem>
       </Popover>
       <Modal
@@ -496,7 +532,8 @@ export default function AppointmentTableRow({
                                     if (meeting.status !== 1) {
                                       setMeetingId(meeting.id); // Set the meetingId
                                       handleOpenEditModalStatusMeeting(e);
-                                    }}
+                                    }
+                                  }
                                   }
                                   variant="outlined"
                                   size="medium"
@@ -509,7 +546,7 @@ export default function AppointmentTableRow({
                                 </Button>
                                 <TableCell>
                                   {meeting.dentistName ? (
-                                      meeting.dentistName
+                                    meeting.dentistName
                                   ) : (
                                     <Select
                                       labelId="dentist-select-label"
@@ -615,7 +652,7 @@ export default function AppointmentTableRow({
                   </InputLabel>
                   <Select
                     labelId="treatment-select-label"
-                    value={meetingStatusEdit} 
+                    value={meetingStatusEdit}
                     onChange={(event) => setMeetingStatusEdit(event.target.value)} // Giả sử setTreatment là hàm cập nhật state
                     style={{ width: '300px', margin: '5px' }}
                   >
@@ -638,6 +675,38 @@ export default function AppointmentTableRow({
           </form>
         </Box>
       </Modal>
+
+
+      <div>
+        {/* <button onClick={handlePrintPDF}>Print PDF</button> */}
+        {/* {pdfUrl && (
+                    <div className="pdf-popup">
+                        <iframe title="PDF Viewer" src={pdfUrl} width="100%" height="600px"></iframe>
+                        <button onClick={handleClosePDF}>Close PDF</button>
+                    </div>
+                )} */}
+        <Dialog
+          open={pdfOpen}
+          onClose={handleClosePDF}
+          fullWidth
+          maxWidth="xl"
+        >
+          <DialogTitle>PDF Viewer</DialogTitle>
+          <DialogContent>
+            {pdfUrl && (
+              <div className="pdf-popup">
+                <iframe title="PDF Viewer" src={pdfUrl} width="100%" height="600px"></iframe>
+                <button onClick={handleClosePDF}>Close PDF</button>
+              </div>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClosePDF} color="secondary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </>
   );
 }
