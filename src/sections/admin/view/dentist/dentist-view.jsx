@@ -13,8 +13,7 @@ export default function DentistPage() {
     const [isUpdate, setIsUpdate] = useState(false);
     const [isModal, setIsModal] = useState(false);
     const [dentistUpdate, setDentistUpdate] = useState(null);
-    const [services, setSetvices] = useState([]);
-    const [serviceNames, setServiceNames] = useState([]);
+    const [specifications, setSpecifications] = useState([]);
     const [form] = Form.useForm();
     const initialValues = {
         firstName: '',
@@ -23,11 +22,12 @@ export default function DentistPage() {
         email: '',
         phoneNumber: '',
         dateOfBirth: null,
-        services: []
+        specifications: []
     };
 
     useEffect(() => {
         fetchDetails();
+        fetchSpecifications();
     }, []);
 
     const fetchDetails = async () => {
@@ -37,21 +37,22 @@ export default function DentistPage() {
             }
         })
             .then(response => {
+                console.log(response.data)
                 if (response.data.statusCode === 200) {
                     setDentists(response.data.data);
                 } else {
-                    console.error('Failed to fetch services:', response.data.message);
+                    console.error('Failed to fetch dentists:', response.data.message);
                 }
-            }).catch(error => console.error('Error fetching services:', error));
+            }).catch(error => console.error('Error fetching dentists:', error));
     };
 
     useEffect(() => {
-        if (dentistUpdate && dentistUpdate.services) {
-            const defaultServiceIds = dentistUpdate.services.map(service => service.id);
+        if (dentistUpdate && dentistUpdate.specifications) {
+            const defaultSpecificationIds = dentistUpdate.specifications.map(spec => spec.id);
             form.setFieldsValue({
                 ...dentistUpdate,
                 dateOfBirth: dentistUpdate.dateOfBirth ? moment(dentistUpdate.dateOfBirth) : null,
-                service: defaultServiceIds
+                specifications: defaultSpecificationIds
             });
         } else {
             form.resetFields();
@@ -116,7 +117,7 @@ export default function DentistPage() {
         })
             .then(response => {
                 if (response.data.statusCode === 200) {
-                    setAlertMessage('Account delete successfully');
+                    setAlertMessage('Account deleted successfully');
                     setShowAlert(true);
                     setTimeout(() => {
                         setShowAlert(false);
@@ -124,9 +125,9 @@ export default function DentistPage() {
                     fetchDetails();
                 } else {
                     message.error(response.data.message);
-                    console.error('Failed to fetch services:', response.data.message);
+                    console.error('Failed to delete dentist:', response.data.message);
                 }
-            }).catch(error => console.error('Error fetching services:', error));
+            }).catch(error => console.error('Error deleting dentist:', error));
     };
 
     const handleUpdate = () => {
@@ -147,10 +148,10 @@ export default function DentistPage() {
             const updatedDentist = {
                 ...dentistUpdate,
                 ...values,
-                servicesId: values.service
+                specificationId: values.specifications
             };
             console.log(updatedDentist)
-            axios.put(`${apiRoot}/dentist/update-dentist/${updatedDentist.id}`, updatedDentist, {
+            axios.put(`${apiRoot}/dentist/update-dentist-and-specification/${updatedDentist.id}`, updatedDentist, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -198,7 +199,7 @@ export default function DentistPage() {
             const addDentist = {
                 ...values,
                 dateOfBirth: formattedDateOfBirth,
-                servicesId: values.service
+                specificationId: values.specifications
             };
             console.log(addDentist)
             axios.post(`${apiRoot}/dentist/create-dentist`, addDentist, {
@@ -207,7 +208,7 @@ export default function DentistPage() {
                 }
             }).then(response => {
                 if (response.data.statusCode === 201) {
-                    setAlertMessage('Account add successfully');
+                    setAlertMessage('Account added successfully');
                     setShowAlert(true);
                     setTimeout(() => {
                         setShowAlert(false);
@@ -218,47 +219,28 @@ export default function DentistPage() {
                     message.error(response.data.message);
                     console.error('Failed to add dentist:', response.data.message);
                 }
-            }).catch(error => console.error('Error add dentist:', error));
-            if (response.data.statusCode === 201) {
-                setTypeAlert("success")
-                setAlertMessage('Account add successfully');
-                setShowAlert(true);
-                setTimeout(() => {
-                    setShowAlert(false);
-                }, 3000);
-                setDentistUpdate(null)
-                fetchDetails();
-            } else {
-                setTypeAlert("error")
-                setAlertMessage(response.data.message);
-                setShowAlert(true);
-                setTimeout(() => {
-                    setShowAlert(false);
-                }, 3000);
-                console.error('Failed to add dentist:', response.data.message);
-            }
-        }).catch(error => console.error('Error add dentist:', error));
+            }).catch(error => console.error('Error adding dentist:', error));
+        }).catch(error => console.error('Error adding dentist:', error));
     };
-    
-    const fetchService = () => {
-        axios.get(`${apiRoot}/service/get-all-services`, {
+
+    const fetchSpecifications = () => {
+        axios.get(`${apiRoot}/specification/get-all-specifications`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
                 if (response.data.statusCode === 200) {
-                    const serviceOption = response.data.data.map(service => ({
-                        label: service.name,
-                        value: service.id
+                    const specificationOptions = response.data.data.map(spec => ({
+                        label: spec.name,
+                        value: spec.id
                     }))
-                    setSetvices(serviceOption)
+                    setSpecifications(specificationOptions)
                 } else {
                     message.error(response.data.message);
-
-                    console.error('Failed to fetch service:', response.data.message);
+                    console.error('Failed to fetch specifications:', response.data.message);
                 }
-            }).catch(error => console.error('Error fetch service:', error));
+            }).catch(error => console.error('Error fetching specifications:', error));
     };
 
     const handleCancel = () => {
@@ -268,29 +250,22 @@ export default function DentistPage() {
     const showModal = (record) => {
         setDentistUpdate(record || initialValues);
         if (record === null) {
-            fetchService()
-            setIsUpdate(false)
-
+            fetchSpecifications();
+            setIsUpdate(false);
         } else {
-            console.log(dentistUpdate)
-            fetchService()
-            setIsUpdate(true)
-            // const defaultServiceNames = dentistUpdate.services.map(service => service.name);
-            // setServiceNames(defaultServiceNames)
+            fetchSpecifications();
+            setIsUpdate(true);
         }
         setIsModal(true);
     };
 
     const handleOk = () => {
         if (isUpdate) {
-            handleUpdate()
+            handleUpdate();
         } else {
-            handleAdd()
+            handleAdd();
         }
-    }
-
-
-
+    };
 
     return (
         <>
@@ -387,14 +362,12 @@ export default function DentistPage() {
                     >
                         <DatePicker />
                     </Form.Item>
-
                     <Form.Item
-                        label="Service"
-                        name="service"
-                        // hidden={isUpdate}
+                        label="Specifications"
+                        name="specifications"
                         rules={[
                             {
-                                required: !isUpdate,
+                                required: true,
                                 message: 'Please input!',
                             },
                         ]}
@@ -405,18 +378,11 @@ export default function DentistPage() {
                                 width: '100%',
                             }}
                             placeholder="Please select"
-                            defaultValue={serviceNames}
-                            options={services}
+                            options={specifications}
                         />
                     </Form.Item>
-
-
-
                 </Form>
             </Modal>
         </>
     );
-
 }
-
-
