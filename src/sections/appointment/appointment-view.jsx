@@ -433,7 +433,7 @@ export default function AppointmentTablePage() {
         open={open}
         onClose={handleClose}
         fullWidth
-        maxWidth="xl"
+        maxWidth="sm"
       >
         <DialogTitle>Booking Appointment</DialogTitle>
         <DialogContent>

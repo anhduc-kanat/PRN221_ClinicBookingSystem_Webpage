@@ -41,7 +41,7 @@ export default function BookingPage() {
     const [profileData, setProfileData] = useState([]);
 
     // const [selectedDentistName, setSelectedDentistName] = useState([])
-    
+
     useEffect(() => {
 
         console.log("API Root: ", apiRoot);
@@ -55,21 +55,25 @@ export default function BookingPage() {
                 }
             }).catch(error => console.error('Error fetching services:', error));
     }, []);
-    
+
     const handleDisableDates = ({ date, view }) => {
         const today = new Date();
+        const twoMonthsLater = new Date();
+        twoMonthsLater.setMonth(today.getMonth() + 2);
+        twoMonthsLater.setHours(0, 0, 0, 0);
         today.setHours(0, 0, 0, 0);
-        if (date < today) {
-          return true;
-        }    
+        if (date < today || date > twoMonthsLater) {
+            return true;
+        }
         // Disable specific dates
         if (view === 'month') {
             return disabledDates.some(disabledDate =>
                 date.getFullYear() === disabledDate.getFullYear() &&
-                date.getMonth() === disabledDate.getMonth() - 1&&
+                date.getMonth() === disabledDate.getMonth() - 1 &&
                 date.getDate() === disabledDate.getDate()
             );
         }
+        
         return false;
     };
 
