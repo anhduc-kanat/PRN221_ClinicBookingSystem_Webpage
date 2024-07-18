@@ -29,6 +29,7 @@ import axios from 'axios';
 import { getStatusText } from 'src/sections/appointment/helper';
 import { getStatusClasses } from 'src/sections/appointment/helper';
 import { formatCurrency } from 'src/sections/appointment/helper';
+import { style } from 'src/sections/appointment/helper';
 // ----------------------------------------------------------------------
 
 const token = localStorage.getItem('accessToken');
@@ -44,6 +45,8 @@ export default function AppointmentTableRow({
   patientPhoneNumber,
   appointmentServices,
   isFullyPaid,
+  slotName,
+  isClinicalExamPaid,
   //
   date,
   startAt,
@@ -73,7 +76,7 @@ export default function AppointmentTableRow({
   const [slots, setSlots] = useState([]);
   const [services, setServices] = useState([]);
   const [dentists, setDentists] = useState([]);
-  const [serviceBusinessId, setServiceBusinessId] = useState(appointmentServices[0].id);
+  const [serviceBusinessId, setServiceBusinessId] = useState();
   const [meetingId, setMeetingId] = useState();
   const [pdfUrl, setPdfUrl] = useState(null);
   const [pdfOpen, setPdfOpen] = useState(false);
@@ -91,9 +94,6 @@ export default function AppointmentTableRow({
   };
 
   const [selectedDentist, setSelectedDentist] = useState('');
-  const handleDentistChange = (event) => {
-    setSelectedDentist(event.target.value);
-  };
 
   const [open, setOpen] = useState(null);
   const handleOpenMenu = (event) => {
@@ -120,10 +120,6 @@ export default function AppointmentTableRow({
   const handleOpenEditModalStatusMeeting = () => setOpenModalStatusMeeting(true);
   const handleCloseModalStatusMeeting = () => setOpenModalStatusMeeting(false);
   //
-  // const getAllSlots = async () => {
-  //   axios.get(`${apiRoot}/slot/get-all-slots`).then((response) => {
-  //     setSlots(response.data);
-  //   }
   const fetchData = async (url, setState) => {
     try {
       const response = await fetch(url);
@@ -139,10 +135,7 @@ export default function AppointmentTableRow({
   useEffect(() => {
     fetchData(`${apiRoot}/slot/get-all-slots`, setSlots);
     fetchData(`${apiRoot}/service/get-all-services`, setServices);
-    if (serviceBusinessId) {
-      fetchDentists(serviceBusinessId);
-    }
-  }, [serviceBusinessId]);
+  }, []);
 
   const fetchDentists = async (businessServiceId) => {
     try {
@@ -222,15 +215,12 @@ export default function AppointmentTableRow({
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      if (response.status === 200) {
-        console.log('Meeting status updated successfully:', response.data);
-      } else {
-        console.warn('Unexpected response:', response);
-      }
+      alert('Appointment updated successfully!');
+      window.location.reload();
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to update meeting status.');
@@ -287,6 +277,13 @@ export default function AppointmentTableRow({
     setPdfOpen(false);
     setPdfUrl(null);
   };
+  // update dentist in meeting
+  const [selectOpen, setSelectOpen] = useState(false);
+  const isToday = (dateString) => {
+    const today = new Date().toISOString().split('T')[0];
+    return dateString === today;
+  };
+
   return (
     <>
       <TableRow
@@ -306,13 +303,11 @@ export default function AppointmentTableRow({
 
         <TableCell>{date}</TableCell>
 
-        <TableCell>
-          {startAt}-{endAt}
-        </TableCell>
-
+        <TableCell>{`${startAt.slice(0, 5)}-${endAt.slice(0, 5)}`}</TableCell>
+        <TableCell>{slotName}</TableCell>
         <TableCell>
           <TableCell>
-            {isFullyPaid ? (
+            {isClinicalExamPaid ? (
               <span style={{ color: 'blue', border: '1px solid blue', padding: '2px' }}>Pay</span>
             ) : (
               <button
@@ -329,6 +324,24 @@ export default function AppointmentTableRow({
               </button>
             )}
           </TableCell>
+        </TableCell>
+        <TableCell>
+          {isFullyPaid == 1 ? (
+            <span style={{ color: 'blue', border: '1px solid blue', padding: '2px' }}>Paid</span>
+          ) : (
+            <button
+              onClick={() => handleCheckout(id)}
+              style={{
+                color: 'white',
+                backgroundColor: 'blue',
+                padding: '5px',
+                border: 'none',
+                borderRadius: '5px',
+              }}
+            >
+              Checkout
+            </button>
+          )}
         </TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -360,6 +373,7 @@ export default function AppointmentTableRow({
           Generate Pdf
         </MenuItem>
       </Popover>
+      {/* ============================================ EDIT APP */}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -370,13 +384,6 @@ export default function AppointmentTableRow({
           <Typography variant="h5"> Edit Appointment</Typography>
           <form>
             <Grid container spacing={1}>
-              <Grid item xs={6}>
-                <Item>
-                  <InputLabel style={{ margin: '5px' }} id="demo-simple-select-label">
-                    Treatment
-                  </InputLabel>
-                </Item>
-              </Grid>
               <Grid item xs={6}>
                 <Item>
                   <InputLabel style={{ margin: '5px' }} id="demo-simple-select-label">
@@ -397,32 +404,6 @@ export default function AppointmentTableRow({
                     {slots.map((slot) => (
                       <MenuItem key={slot.id} value={slot.id}>
                         {slot.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Item>
-              </Grid>
-            </Grid>
-            {/* row 2 */}
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Item>
-                  <InputLabel style={{ margin: '5px' }} id="demo-simple-select-label">
-                    Service Type
-                  </InputLabel>
-                  <Select
-                    labelId="service-type-select-label"
-                    id="service-type-select"
-                    value={serviceIdEdit}
-                    onChange={(newValue) => setServiceId(newValue.target.value)}
-                    style={{ width: '300px', margin: '5px' }}
-                  >
-                    <MenuItem value="" disabled>
-                      Select Service
-                    </MenuItem>
-                    {services.map((service) => (
-                      <MenuItem key={service.id} value={service.id}>
-                        {service.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -449,6 +430,32 @@ export default function AppointmentTableRow({
                       color: 'grey',
                     }}
                   />
+                </Item>
+              </Grid>
+            </Grid>
+            {/* row 2 */}
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Item>
+                  <InputLabel style={{ margin: '5px' }} id="demo-simple-select-label">
+                    Service Type
+                  </InputLabel>
+                  <Select
+                    labelId="service-type-select-label"
+                    id="service-type-select"
+                    value={serviceIdEdit}
+                    onChange={(newValue) => setServiceId(newValue.target.value)}
+                    style={{ width: '300px', margin: '5px' }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select Service
+                    </MenuItem>
+                    {services.map((service) => (
+                      <MenuItem key={service.id} value={service.id}>
+                        {service.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
                 </Item>
               </Grid>
             </Grid>
@@ -496,7 +503,7 @@ export default function AppointmentTableRow({
           </form>
         </Box>
       </Modal>
-      {/* ============================================ */}
+      {/* ============================================ DETAIL APP */}
       <Modal
         open={openModalService}
         onClose={handleCloseModalService}
@@ -514,6 +521,7 @@ export default function AppointmentTableRow({
                         <TableCell>Service Name</TableCell>
                         <TableCell>Service Price</TableCell>
                         <TableCell>Status</TableCell>
+                        <TableCell>Is Paid</TableCell>
                         <TableCell>Meeting History</TableCell>
                       </TableRow>
                     </TableHead>
@@ -522,7 +530,14 @@ export default function AppointmentTableRow({
                         <TableRow key={service.id}>
                           <TableCell>{service.serviceName}</TableCell>
                           <TableCell>{formatCurrency(service.servicePrice)}</TableCell>
-                          <TableCell>{service.status}</TableCell>
+                          <TableCell>{getStatusText(service.status)}</TableCell>
+                          <TableCell
+                            style={{
+                              color: service.isPaid ? '#10B981' : '#F97316',
+                            }}
+                          >
+                            {service.isPaid ? 'Paid' : 'Pending'}
+                          </TableCell>
                           <TableCell>
                             {service.meetings.map((meeting) => (
                               <TableRow key={meeting.id}>
@@ -533,10 +548,9 @@ export default function AppointmentTableRow({
                                       setMeetingId(meeting.id); // Set the meetingId
                                       handleOpenEditModalStatusMeeting(e);
                                     }
-                                  }
-                                  }
+                                  }}
                                   variant="outlined"
-                                  size="medium"
+                                  size="large"
                                   className={`border ${getStatusClasses(
                                     meeting.status
                                   )} w-11 text-xs`}
@@ -553,12 +567,13 @@ export default function AppointmentTableRow({
                                       id="dentist-select"
                                       value={dentistIdEdit}
                                       onChange={(event) => setDentistId(event.target.value)}
+                                      disabled={!service.isPaid || !isToday(meeting.date)}
                                       onOpen={() => {
-                                        setServiceBusinessId(service.businessServiceId);
-                                        if (serviceBusinessId) {
-                                          fetchDentists(serviceBusinessId);
-                                        }
+                                        fetchDentists(service.businessServiceId);
+                                        setSelectOpen(true); 
                                       }}
+                                      onClose={() => setSelectOpen(false)}
+                                      open={selectOpen}
                                       style={{ width: '150px', margin: '5px' }}
                                     >
                                       <MenuItem value="" disabled>
@@ -585,7 +600,7 @@ export default function AppointmentTableRow({
           </Grid>
         </Box>
       </Modal>
-      {/* ============================================ */}
+      {/* ============================================ CHECK IN_OUT */}
       <Modal
         open={openModalStatus}
         onClose={handleCloseModalStatus}
@@ -633,7 +648,7 @@ export default function AppointmentTableRow({
           </form>
         </Box>
       </Modal>
-      {/* ============================================ */}
+      {/* ============================================ MEETING STATUS */}
       <Modal
         open={openModalStatusMeeting}
         onClose={handleCloseModalStatusMeeting}
@@ -715,12 +730,14 @@ AppointmentTableRow.propTypes = {
   appointmentServices: PropTypes.any,
   isFullyPaid: PropTypes.any,
   selected: PropTypes.any,
+  slotName: PropTypes.any,
   id: PropTypes.any,
   slotId: PropTypes.any,
   serviceId: PropTypes.any,
   dentistId: PropTypes.any,
   patientName: PropTypes.any,
   patientPhoneNumber: PropTypes.any,
+  isClinicalExamPaid: PropTypes.any,
   slotName: PropTypes.any,
   date: PropTypes.any,
   startAt: PropTypes.any,

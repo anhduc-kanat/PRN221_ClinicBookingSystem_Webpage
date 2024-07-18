@@ -44,7 +44,7 @@ export default function AccountPopover() {
   const logout = () => {
     localStorage.removeItem("accessToken");
     window.location.href = "/login";
-  };
+};
 
   return (
     <>
