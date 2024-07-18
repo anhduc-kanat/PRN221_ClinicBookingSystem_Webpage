@@ -10,6 +10,7 @@ export const visuallyHidden = {
   clip: 'rect(0 0 0 0)',
 };
 
+
 export function emptyRows(page, rowsPerPage, arrayLength) {
   return page ? Math.max(0, (1 + page) * rowsPerPage - arrayLength) : 0;
 }

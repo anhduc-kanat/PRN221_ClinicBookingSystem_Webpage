@@ -21,7 +21,14 @@ import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import Iconify from 'src/components/iconify';
+import axios from 'axios';
+import { getStatusText } from 'src/sections/appointment/helper';
+import { getStatusClasses } from 'src/sections/appointment/helper';
+import {formatCurrency} from 'src/sections/appointment/helper';
 // ----------------------------------------------------------------------
+
+const token = localStorage.getItem('accessToken');
+const apiRoot = import.meta.env.VITE_API_ROOT;
 
 export default function AppointmentTableRow({
   id,
@@ -47,8 +54,8 @@ export default function AppointmentTableRow({
   const [slotIdEdit, setSlotId] = useState(slotId);
   const [dentistIdEdit, setDentistId] = useState(dentistId);
   const [statusEdit, setStatusEdit] = useState(status);
-  const [meetingStatusEdit, setMeetingStatusEdit] = useState();
-  
+  const [meetingStatusEdit, setMeetingStatusEdit] = useState(2);
+
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -57,54 +64,13 @@ export default function AppointmentTableRow({
     color: theme.palette.text.secondary,
   }));
   //
-  const getStatusText = (statusMeeting) => {
-    switch (statusMeeting) {
-      case 1:
-        return 'Done';
-      case 2:
-        return 'Check in';
-      case 3:
-        return 'Waiting';
-      case 4:
-        return 'Future';
-      default:
-        return 'Unknown';
-    }
-  };
 
-  const getStatusClasses = (statusApp) => {
-    switch (statusApp) {
-      case 1:
-        return 'text-green-500 border-green-500'; // Assuming green for 'Done'
-      case 2:
-        return 'text-blue-500 border-blue-500'; // Assuming blue for 'OnGoing'
-      case 3:
-        return 'text-orange-500 border-orange-500'; // Assuming orange for 'Scheduled'
-      case 4:
-        return 'text-red-500 border-red-500'; // Assuming red for 'Rejected'
-      default:
-        return 'text-gray-500 border-gray-500'; // Assuming grey for 'Unknown'
-    }
-  };
-
-  const getStatusTextApp = (statusApp) => {
-    switch (statusApp) {
-      case 1:
-        return 'Done';
-      case 2:
-        return 'OnGoing';
-      case 3:
-        return 'Scheduled';
-      case 4:
-        return 'Rejected';
-      default:
-        return 'Unknown';
-    }
-  };
   // call API to get all
   const [slots, setSlots] = useState([]);
   const [services, setServices] = useState([]);
   const [dentists, setDentists] = useState([]);
+  const [serviceBusinessId, setServiceBusinessId] = useState(appointmentServices[0].id);
+  const [meetingId, setMeetingId] = useState();
 
   const style = {
     position: 'absolute',
@@ -113,7 +79,6 @@ export default function AppointmentTableRow({
     transform: 'translate(-50%, -50%)',
     width: '70%',
     borderRadius: '30px',
-
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -149,75 +114,62 @@ export default function AppointmentTableRow({
   const handleOpenEditModalStatusMeeting = () => setOpenModalStatusMeeting(true);
   const handleCloseModalStatusMeeting = () => setOpenModalStatusMeeting(false);
   //
-  useEffect(() => {
-    fetch('https://api-prn.zouzoumanagement.xyz/api/slot/get-all-slots')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setSlots(data.data);
-      })
-      .catch((error) => {
-        console.error('There was a problem with your fetch operation:', error);
-      });
-  }, []);
-  useEffect(() => {
-    fetch('https://api-prn.zouzoumanagement.xyz/api/service/get-all-services')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setServices(data.data);
-      })
-      .catch((error) => {
-        console.error('There was a problem with your fetch operation:', error);
-      });
-  }, []);
-
-  const fetchDentists = async () => {
+  // const getAllSlots = async () => {
+  //   axios.get(`${apiRoot}/slot/get-all-slots`).then((response) => {
+  //     setSlots(response.data);
+  //   }
+  const fetchData = async (url, setState) => {
     try {
-      const response = await fetch('https://api-prn.zouzoumanagement.xyz/api/dentist/get-dentists');
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setDentists(data.data); // Assuming the API returns an array of appointments
+      setState(data.data);
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
+      console.error('There was a problem with your fetch operation:', error);
     }
   };
   useEffect(() => {
-    fetchDentists();
-  }, []);
-  const getAuthToken = () => {
-    return localStorage.getItem('authToken');
-  };
-  const updateAppointmentStatus = async (appointmentId, appointmentStatus) => {
-    const authToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoic3RhZmYxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU1RBRkYiLCJUaW1lc3RhbXAiOiIyMDI0LTA3LTA5IDA4OjU1OjIyLjA4NjQ1NzEiLCJqdGkiOiJjNmYwNTY5ZS0xYTJiLTRmNTUtOGUxNi1mMTMzZWM1YmJjYjIiLCJleHAiOjE3MjA1NzUzMjIsImlzcyI6Imh0dHBzOi8vYXBpLXBybi56b3V6b3VtYW5hZ2VtZW50Lnh5eiIsImF1ZCI6Imh0dHBzOi8vYXBpLXBybi56b3V6b3VtYW5hZ2VtZW50Lnh5eiJ9.LmfSTC_-4-witsCRXjWiABuyeoabVoMGDkdlsOdYB_U';
-    const url = `https://api-prn.zouzoumanagement.xyz/api/appointment/staff-update-customer-appointment/${appointmentId}?appointmentStatus=${appointmentStatus}`;
+    fetchData(`${apiRoot}/slot/get-all-slots`, setSlots);
+    fetchData(`${apiRoot}/service/get-all-services`, setServices);
+    if (serviceBusinessId) {
+      fetchDentists(serviceBusinessId);
+    }
+  }, [serviceBusinessId]);
 
+  const fetchDentists = async (businessServiceId) => {
+    try {
+      const response = await axios.get(
+        `${apiRoot}/dentist/get-dentist-service/${businessServiceId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setDentists(response.data.data);
+    } catch (error) {
+      console.error('There was a problem with the axios operation:', error);
+    }
+  };
+
+  const updateAppointmentStatus = async (appointmentId, appointmentStatus) => {
+    const url = `${apiRoot}/appointment/staff-update-customer-appointment/${appointmentId}?appointmentStatus=${appointmentStatus}`;
     try {
       const response = await fetch(url, {
-        method: 'PUT', // or 'PUT'
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`, // Assuming Bearer token, adjust if needed
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
       const data = await response.json();
-      console.log(data); // Process your data here
+      console.log(data);
       alert('Appointment status updated successfully!');
     } catch (error) {
       console.error('Error:', error);
@@ -233,16 +185,13 @@ export default function AppointmentTableRow({
     isPeriod,
   };
   const handleUpdateAppointment = async ({ apppointmentId, updateAppointment1 }) => {
-    const authToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMTEzMTEzMTEzMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlNUQUZGIiwiVGltZXN0YW1wIjoiMjAyNC0wNi0yNSAwNzoxNzowNS4xMjIzNjg5IiwianRpIjoiYjczYWQ3NTEtNGQxYi00NDdiLWJjNzAtODk3Yzk2ZGVjZTBlIiwiZXhwIjoxNzE5MzAwNDI1LCJpc3MiOiJodHRwczovL2FwaS1wcm4uem91em91bWFuYWdlbWVudC54eXoiLCJhdWQiOiJodHRwczovL2FwaS1wcm4uem91em91bWFuYWdlbWVudC54eXoifQ.EAQLHFLqFA3DkOdKvexffB9Ly0DwTntK7_oIrbSPelk';
-    const url = `https://api-prn.zouzoumanagement.xyz/api/appointment/staff-update-customer-appointment/${apppointmentId}`;
-
+    const url = `${apiRoot}/appointment/staff-update-customer-appointment/${apppointmentId}`;
     try {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updateAppointment1),
       });
@@ -260,22 +209,52 @@ export default function AppointmentTableRow({
     }
   };
   //
- const updateStatusMeeting = async (meetingId, statusMeeting) => {
-  const token = '';
-  try{
-    const response = await fetch(`https://api-prn.zouzoumanagement.xyz/api/meeting/update-meeting-status/${meetingId}?status=${statusMeeting}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-    });
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Failed to update meeting status.');
-  }
- };
+  const updateStatusMeeting = async (meetingId, statusMeeting) => {
+    try {
+      const response = await axios.put(
+        `${apiRoot}/meeting/update-meeting-status/${meetingId}?status=${statusMeeting}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );     
+      if (response.status === 200) {
+        console.log('Meeting status updated successfully:', response.data);
+      } else {
+        console.warn('Unexpected response:', response);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to update meeting status.');
+    }
+  };
   //
+  const handleCheckout = async (appId) => {
+    try {
+      const response = await fetch(
+        `${apiRoot}/appointment/staff-create-treatment-payment/${appId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      console.log(data);
+      if (data.statusCode === 200) {
+        window.open(data.data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  };
   return (
     <>
       <TableRow
@@ -283,7 +262,7 @@ export default function AppointmentTableRow({
         tabIndex={-1}
         role="checkbox"
         selected={selected}
-        onClick={handleOpenEditModalService}
+        onDoubleClick={handleOpenEditModalService}
       >
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
@@ -299,28 +278,13 @@ export default function AppointmentTableRow({
           {startAt}-{endAt}
         </TableCell>
 
-        {/* <TableCell>{dentistTreatmentName}</TableCell>
-
-        <TableCell>{serviceName}</TableCell>
-
-        <TableCell>{description}</TableCell> */}
-
-        <TableCell>
-          <Button
-            onClick={handleOpenEditModalStatus}
-            variant="outlined"
-            size="medium"
-            className={`border ${getStatusClasses(status)} w-11 text-xs`}
-          >
-            {getStatusText(status)}
-          </Button>
-        </TableCell>
         <TableCell>
           <TableCell>
             {isFullyPaid ? (
               <span style={{ color: 'blue', border: '1px solid blue', padding: '2px' }}>Pay</span>
             ) : (
               <button
+                onClick={() => handleCheckout(id)}
                 style={{
                   color: 'white',
                   backgroundColor: 'blue',
@@ -514,7 +478,6 @@ export default function AppointmentTableRow({
                         <TableCell>Service Name</TableCell>
                         <TableCell>Service Price</TableCell>
                         <TableCell>Status</TableCell>
-                        <TableCell>Meetings</TableCell>
                         <TableCell>Meeting History</TableCell>
                       </TableRow>
                     </TableHead>
@@ -522,33 +485,43 @@ export default function AppointmentTableRow({
                       {appointmentServices.map((service) => (
                         <TableRow key={service.id}>
                           <TableCell>{service.serviceName}</TableCell>
-                          <TableCell>{service.servicePrice}</TableCell>
+                          <TableCell>{formatCurrency(service.servicePrice)}</TableCell>
                           <TableCell>{service.status}</TableCell>
-                          <TableCell>
-                            {service.meetingCount}/{service.totalMeetingDate}
-                          </TableCell>
                           <TableCell>
                             {service.meetings.map((meeting) => (
                               <TableRow key={meeting.id}>
                                 <TableCell>{meeting.date}</TableCell>
                                 <Button
-                                  onClick={handleOpenEditModalStatusMeeting}
+                                  onClick={(e) => {
+                                    if (meeting.status !== 1) {
+                                      setMeetingId(meeting.id); // Set the meetingId
+                                      handleOpenEditModalStatusMeeting(e);
+                                    }}
+                                  }
                                   variant="outlined"
                                   size="medium"
-                                  className={`border ${getStatusClasses(status)} w-11 text-xs`}
+                                  className={`border ${getStatusClasses(
+                                    meeting.status
+                                  )} w-11 text-xs`}
                                   style={{ marginTop: '30px' }}
                                 >
-                                  {getStatusText(meeting.status)}                                  
+                                  {getStatusText(meeting.status)}
                                 </Button>
                                 <TableCell>
-                                  {service.dentistName != null ? (
-                                    service.dentistName
+                                  {meeting.dentistName ? (
+                                      meeting.dentistName
                                   ) : (
                                     <Select
                                       labelId="dentist-select-label"
                                       id="dentist-select"
                                       value={dentistIdEdit}
                                       onChange={(event) => setDentistId(event.target.value)}
+                                      onOpen={() => {
+                                        setServiceBusinessId(service.businessServiceId);
+                                        if (serviceBusinessId) {
+                                          fetchDentists(serviceBusinessId);
+                                        }
+                                      }}
                                       style={{ width: '150px', margin: '5px' }}
                                     >
                                       <MenuItem value="" disabled>
@@ -642,19 +615,13 @@ export default function AppointmentTableRow({
                   </InputLabel>
                   <Select
                     labelId="treatment-select-label"
-                    value={statusEdit}
+                    value={meetingStatusEdit} 
                     onChange={(event) => setMeetingStatusEdit(event.target.value)} // Giả sử setTreatment là hàm cập nhật state
                     style={{ width: '300px', margin: '5px' }}
-                  >             
-                    <MenuItem value={2}>
-                      Check in 
-                    </MenuItem>
-                    <MenuItem value={3}>
-                      Waiting
-                    </MenuItem>
-                    <MenuItem value={4}>
-                      Future
-                    </MenuItem>
+                  >
+                    <MenuItem value={2}>Check in</MenuItem>
+                    <MenuItem value={3}>Waiting</MenuItem>
+                    <MenuItem value={4}>Future</MenuItem>
                   </Select>
                 </Item>
               </Grid>
@@ -664,7 +631,7 @@ export default function AppointmentTableRow({
               variant="contained"
               color="primary"
               style={{ marginLeft: '61%', width: '70px', height: '40px', borderRadius: '10px' }}
-              onClick={() => updateStatusMeeting(id, meetingStatusEdit)}
+              onClick={() => updateStatusMeeting(meetingId, meetingStatusEdit)}
             >
               Update
             </Button>
