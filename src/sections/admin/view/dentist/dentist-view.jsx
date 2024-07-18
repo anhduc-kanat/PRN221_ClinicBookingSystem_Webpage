@@ -144,6 +144,18 @@ export default function DentistPage() {
                 message.error('Phone number must be exactly 10 digits!');
                 return;
             }
+            let formattedDateOfBirth = null;
+            if (values.dateOfBirth) {
+                const momentDate = values.dateOfBirth;
+                if (momentDate.isValid()) {
+                    const year = momentDate.year();
+                    if (year > 1998) {
+                        message.error('Year of birth must be 1998 or earlier!');
+                        return;
+                    }
+                    formattedDateOfBirth = momentDate.format('YYYY-MM-DD');
+                }
+            }
             const updatedDentist = {
                 ...dentistUpdate,
                 ...values,
@@ -192,6 +204,11 @@ export default function DentistPage() {
             if (values.dateOfBirth) {
                 const momentDate = values.dateOfBirth;
                 if (momentDate.isValid()) {
+                    const year = momentDate.year();
+                    if (year > 1998) {
+                        message.error('Year of birth must be 1998 or earlier!');
+                        return;
+                    }
                     formattedDateOfBirth = momentDate.format('YYYY-MM-DD');
                 }
             }
