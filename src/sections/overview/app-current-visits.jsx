@@ -42,14 +42,14 @@ export default function AppCurrentVisits({ title, subheader, chart, ...other }) 
       },
     },
     colors,
-    labels: series.map((i) => i.label),
+    labels: series.map((i) => i.key),
     stroke: {
       colors: [theme.palette.background.paper],
     },
     legend: {
       floating: true,
       position: 'bottom',
-      horizontalAlign: 'center',
+      horizontalAlign: 'left',
     },
     dataLabels: {
       enabled: true,
