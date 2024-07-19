@@ -73,7 +73,7 @@ export default function Router() {
     {
       path: "booking",
       element: (
-        <ProtectedRoute allowedRoles={['CUSTOMER']}>
+        <ProtectedRoute allowedRoles={['CUSTOMER', 'STAFF']}>
           <Suspense>
             <Outlet />
           </Suspense>

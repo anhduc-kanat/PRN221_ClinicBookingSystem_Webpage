@@ -82,11 +82,11 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        <Typography variant="h4">Appointments</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New Dentist
-        </Button>
+        </Button> */}
       </Stack>
 
       <Card>
@@ -119,8 +119,8 @@ export default function UserPage() {
                 headLabel={[
                   { id: 'accountName', label: 'Account Name', align: 'center' },
                   { id: 'profileName', label: 'Profile Name', align: 'center' },
-                  { id: 'slot', label: 'Slot', align: 'center' },
-                  { id: 'date', label: 'Date', align: 'center' },
+                  { id: 'slot', label: 'Begin Slot', align: 'center' },
+                  { id: 'date', label: 'Begin Date', align: 'center' },
                   { id: '', label: '' }
                 ]}
               />
