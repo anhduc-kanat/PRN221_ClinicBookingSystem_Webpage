@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import './Dentists.css';
-import { Button, DatePicker, Select, Spin } from "antd";
+import { Button, DatePicker, message, Select, Spin } from "antd";
 import axios from "axios";
 import { CloseOutlined } from "@mui/icons-material";
 
@@ -65,8 +65,8 @@ export default function DentistAppointmentDetail() {
     };
 
     const handleAddService = () => {
-        if (!selectedService || dates.some(date => date.value === "")) {
-            console.log("No service selected or not all dates provided");
+        if (!selectedService || dates.some(date => date.value === "") || dates.length === 0) {
+            message.error("No service selected or not all dates provided");
             return;
         }
 
@@ -268,8 +268,7 @@ export default function DentistAppointmentDetail() {
                                         <h1>Services of Appointment</h1>
                                         {appointment.appointmentServices.map(service => (
                                             <div key={service.id}>
-                                                <p>Dentist Name: {service.dentistName}</p>
-                                                <p>Service Name: {service.serviceName}</p>
+                                                <li>Service Name: {service.serviceName}</li>
                                                 <hr></hr>
                                             </div>
                                         ))}
