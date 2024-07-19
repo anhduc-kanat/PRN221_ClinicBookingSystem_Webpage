@@ -106,6 +106,7 @@ export default function DentistAppointmentDetail() {
             })
             .catch(error => {
                 console.log("Error at Add Service: ", error.response.data);
+                message.error(error.response.data.error);
                 setIsLoading(false);
             });
     };
