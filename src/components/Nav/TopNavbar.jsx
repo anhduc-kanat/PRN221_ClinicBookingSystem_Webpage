@@ -40,6 +40,10 @@ export default function TopNavbar() {
     }
   }
 
+  const handleBackToHomePage = () => {
+    navigate('/');
+  }
+
   return (
     <>
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
@@ -47,7 +51,7 @@ export default function TopNavbar() {
       <Wrapper className="flexCenter animate whiteBg" style={y > 100 ? { height: "60px" } : { height: "80px" }}>
         <NavInner className="container flexSpaceCenter">
           <Link className="pointer flexNullCenter" to="/" smooth={true}>
-            <img src="/logo.png" alt="logo" width={60} height={60} viewBox="0 0 80 80" />
+            <img src="/logo.png" alt="logo" width={60} height={60} viewBox="0 0 80 80" onClick={handleBackToHomePage} />
             <h1 className="font20 extraBold">
               Dental Clinic
             </h1>

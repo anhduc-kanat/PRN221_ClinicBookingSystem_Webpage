@@ -30,6 +30,7 @@ import { getStatusText } from 'src/sections/appointment/helper';
 import { getStatusClasses } from 'src/sections/appointment/helper';
 import { formatCurrency } from 'src/sections/appointment/helper';
 import { style } from 'src/sections/appointment/helper';
+import { message } from 'antd';
 // ----------------------------------------------------------------------
 
 const token = localStorage.getItem('accessToken');
@@ -52,8 +53,6 @@ export default function AppointmentTableRow({
   startAt,
   endAt,
   status,
-  isPeriod,
-  patientId,
   handleClick,
 }) {
   const [dateEdit, setDate] = useState(date);
@@ -93,7 +92,9 @@ export default function AppointmentTableRow({
     p: 4,
   };
 
-  const [selectedDentist, setSelectedDentist] = useState('');
+  const [selectOpenState, setSelectOpenState] = useState({});
+  const [selectedDentists, setSelectedDentists] = useState({});
+  
 
   const [open, setOpen] = useState(null);
   const handleOpenMenu = (event) => {
@@ -114,7 +115,9 @@ export default function AppointmentTableRow({
   //
   const [openModalService, setOpenModalService] = React.useState(false);
   const handleOpenEditModalService = () => setOpenModalService(true);
-  const handleCloseModalService = () => setOpenModalService(false);
+  const handleCloseModalService = () => {setOpenModalService(false) 
+    setSelectedDentists({})
+  };
   //
   const [openModalStatusMeeting, setOpenModalStatusMeeting] = React.useState(false);
   const handleOpenEditModalStatusMeeting = () => setOpenModalStatusMeeting(true);
@@ -137,6 +140,22 @@ export default function AppointmentTableRow({
     fetchData(`${apiRoot}/service/get-all-services`, setServices);
   }, []);
 
+  const handleSelectOpen = (meetingId, serviceId) => {
+    setSelectOpenState((prevState) => ({
+      ...prevState,
+      [meetingId]: true,
+    }));
+    console.log(serviceId);
+    fetchDentists(serviceId);
+  };
+
+  const handleSelectClose = (meetingId) => {
+    setSelectOpenState((prevState) => ({
+      ...prevState,
+      [meetingId]: false,
+    }));
+  };
+
   const fetchDentists = async (businessServiceId) => {
     try {
       const response = await axios.get(
@@ -147,9 +166,47 @@ export default function AppointmentTableRow({
           },
         }
       );
+      console.log(response)
       setDentists(response.data.data);
     } catch (error) {
       console.error('There was a problem with the axios operation:', error);
+    }
+  };
+
+  const handleDentistChange = (meetingId, dentistId) => {
+    setSelectedDentists((prevState) => ({
+      ...prevState,
+      meetingId: meetingId,
+      dentistId: dentistId,
+      [meetingId]: dentistId
+    }));
+    console.log("selected Dentist:", selectedDentists);
+  };
+
+  const handleConfirm = async (meetingId) => {
+    const dentistId = selectedDentists[meetingId];
+    if (dentistId) {
+      console.log(dentistId);
+      console.log(meetingId);
+      axios.post(`${apiRoot}/meeting/add-dentist-into-meeting/${meetingId}/${dentistId}`, null, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => {
+        console.log(res.data);
+        if (res.data.statusCode === 200) {
+          message.success(res.data.message);
+          setOpenModalService(false);
+          setSelectedDentists({});
+          window.location.reload();
+        } else {
+          message.error(res.data.message);
+        }
+      })
+      .catch(err => {
+        console.log("Error at add dentist into meeting", err.message);
+      })
     }
   };
 
@@ -176,23 +233,19 @@ export default function AppointmentTableRow({
     }
   };
   const updateAppointment = {
-    patientId,
     slotIdEdit,
-    serviceIdEdit,
-    dentistIdEdit,
-    dateEdit,
-    isPeriod,
+    dateEdit
   };
-  const handleUpdateAppointment = async ({ apppointmentId, updateAppointment1 }) => {
-    const url = `${apiRoot}/appointment/staff-update-customer-appointment/${apppointmentId}`;
+  const handleUpdateAppointment = async ({ id, updateAppointment }) => {
+    const url = `${apiRoot}/appointment/staff-update-customer-appointment/${id}`;
     try {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(updateAppointment1),
+        body: JSON.stringify(updateAppointment),
       });
 
       if (!response.ok) {
@@ -202,6 +255,7 @@ export default function AppointmentTableRow({
       const data = await response.json();
       console.log(data); // Process your data here
       alert('Appointment updated successfully!');
+      window.location.reload();
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to update appointment.');
@@ -215,7 +269,7 @@ export default function AppointmentTableRow({
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
           },
         }
       );
@@ -280,7 +334,7 @@ export default function AppointmentTableRow({
   // update dentist in meeting
   const [selectOpen, setSelectOpen] = useState(false);
   const isToday = (dateString) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' });
     return dateString === today;
   };
 
@@ -542,22 +596,22 @@ export default function AppointmentTableRow({
                             {service.meetings.map((meeting) => (
                               <TableRow key={meeting.id}>
                                 <TableCell>{meeting.date}</TableCell>
-                                <Button
-                                  onClick={(e) => {
-                                    if (meeting.status !== 1) {
-                                      setMeetingId(meeting.id); // Set the meetingId
-                                      handleOpenEditModalStatusMeeting(e);
-                                    }
-                                  }}
-                                  variant="outlined"
-                                  size="large"
-                                  className={`border ${getStatusClasses(
-                                    meeting.status
-                                  )} w-11 text-xs`}
-                                  style={{ marginTop: '30px' }}
-                                >
-                                  {getStatusText(meeting.status)}
-                                </Button>
+                                <TableCell>
+                                  <Button
+                                    onClick={(e) => {
+                                      if (meeting.status !== 1) {
+                                        setMeetingId(meeting.id); // Set the meetingId
+                                        handleOpenEditModalStatusMeeting(e);
+                                      }
+                                    }}
+                                    variant="outlined"
+                                    size="large"
+                                    className={`border ${getStatusClasses(meeting.status)} w-11 text-xs`}
+                                    style={{ marginTop: '30px' }}
+                                  >
+                                    {getStatusText(meeting.status)}
+                                  </Button>
+                                </TableCell>
                                 <TableCell>
                                   {meeting.dentistName ? (
                                     meeting.dentistName
@@ -565,26 +619,30 @@ export default function AppointmentTableRow({
                                     <Select
                                       labelId="dentist-select-label"
                                       id="dentist-select"
-                                      value={dentistIdEdit}
-                                      onChange={(event) => setDentistId(event.target.value)}
+                                      value={selectedDentists[meeting.id] || ''}
+                                      onChange={(event) => handleDentistChange(meeting.id, event.target.value)}
                                       disabled={!service.isPaid || !isToday(meeting.date)}
-                                      onOpen={() => {
-                                        fetchDentists(service.businessServiceId);
-                                        setSelectOpen(true); 
-                                      }}
-                                      onClose={() => setSelectOpen(false)}
-                                      open={selectOpen}
+                                      onOpen={() => handleSelectOpen(meeting.id, service.businessServiceId)}
+                                      onClose={() => handleSelectClose(meeting.id)}
+                                      open={selectOpenState[meeting.id] || false}
                                       style={{ width: '150px', margin: '5px' }}
                                     >
                                       <MenuItem value="" disabled>
                                         Select Dentist
                                       </MenuItem>
-                                      {dentists.map((dentists) => (
-                                        <MenuItem key={dentists.id} value={dentists.id}>
-                                          {dentists.firstName} {dentists.lastName}
+                                      {dentists.map((dentist) => (
+                                        <MenuItem key={dentist.id} value={dentist.id}>
+                                          {dentist.firstName} {dentist.lastName}
                                         </MenuItem>
                                       ))}
                                     </Select>
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  {meeting.dentistName ? (
+                                    <></>
+                                  ) : (
+                                    <Button onClick={() => handleConfirm(meeting.id)}>Confirm</Button>
                                   )}
                                 </TableCell>
                               </TableRow>
