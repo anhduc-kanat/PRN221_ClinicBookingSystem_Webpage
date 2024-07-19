@@ -73,7 +73,6 @@ export default function BookingPage() {
                 date.getDate() === disabledDate.getDate()
             );
         }
-        
         return false;
     };
 

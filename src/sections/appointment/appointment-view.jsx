@@ -34,6 +34,7 @@ import AppointmentTableHead from './appointment-table-head';
 import { emptyRows, applyFilter, getComparator } from './utils';
 import AppointmentTableToolbar from './appointment-table-toolbar';
 import axios from 'axios';
+import { DatasetSharp } from '@mui/icons-material';
 
 // ----------------------------------------------------------------------
 
@@ -163,15 +164,7 @@ export default function AppointmentTablePage() {
     setAppointments(results);
   };
 
-  useEffect(() => {
-    axios.get(`${apiRoot}/service/get-all-exam-services`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then(response => {
-      setServices(response.data.data)
-    })
-  }, [])
+
   const handleBooking = () => {
     setOpen(true);
   }
@@ -208,77 +201,118 @@ export default function AppointmentTablePage() {
 
     })
   }
+  //-----------------------------------------------------------------------------
+  const handlePatientChange = (event) => setPatient(event.target.value);
+  const handleUserAccountChange = (event, account) => setUserAccount(account.id);
+  const handleServiceChange = (event) => setService(event.target.value);
+  const handleDentistChange = (event) => setDentist(event.target.value);
+  const handleDateChange = (event) => {
+    console.log(dates + " " + event.target.value)
+    setSlots([]);
+    setPatients([]);
+    const today = new Date();
+    if (event.target.value < today) {
+      message.error("Can not book date in the past")
+    } else if (dates.includes(event.target.value)) {
+      message.error("Date unavailable")
+    }
+    else {
+      setDate(event.target.value);
+    }
+  }
+  const handleSlotChange = (event) => setSlot(event.target.value);
 
-
-  const handleServiceChange = (event) => {
-    axios.get(`${apiRoot}/dentist/get-dentist-service/${event.target.value}`, {
+  const handleShowService = () => {
+    axios.get(`${apiRoot}/service/get-all-exam-services`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).then(response => {
-      
+      setDentists([]);
+      setSlots([]);
+      setPatients([]);
+      setDate('');
+      setServices(response.data.data)
+      console.log(userAccount)
+    })
+  };
+
+  const handleShowDentist = () => {
+    axios.get(`${apiRoot}/dentist/get-dentist-service/${service}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(response => {
+      setSlots([]);
+      setPatients([]);
+      setDate('');
       setDentists(response.data.data);
     })
 
-    console.log(event.target.value)
-    setService(event.target.value)
+
   };
-  const handleDentistChange = (event) => {
-    axios.get(`${apiRoot}/dentist/get-date/`, {
+
+
+  const handleShowSlot = () => {
+    axios.get(`${apiRoot}/slot/get-all-available-slots`, {
       params: {
-        id: event.target.value
+        dentistId: dentist,
+        date: date
       },
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).then(response => {
-      setDates(response.data.data)
+      setPatients([]);
+      setSlots(response.data.data)
     })
-    setDentist(event.target.value)
-  };
-  const handleSlotChange = (event) => {
+
+  }
+
+
+  const handleShowUserAccount = () => {
     axios.get(`${apiRoot}/customer/get-all-customers`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).then(response => {
-      
-        setUserAccounts(response.data.data)
+      setUserAccounts(response.data.data)
     })
-    setSlot(event.target.value)
+
+
   };
-  const handleUserAccountChange = (event, account) => {
-    console.log(account.id)
+
+  const handleShowProfile = () => {
+    console.log(userAccount)
     axios.get(`${apiRoot}/user-profile/get-profile-by-user-account-id`, {
       params: {
-        userId: account.id,
+        userId: userAccount,
       },
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).then(response => {
+      console.log(response.data)
       setPatients(response.data.data)
     })
-    setUserAccount(account.id)
-  };
-  const handlePatientChange = (event) => setPatient(event.target.value);
+  }
 
-  const handleDateChange = (event) => {
-    console.log(event.target.value)
-    console.log(dentist)
-    axios.get(`${apiRoot}/slot/get-all-available-slots`, {
+  const handleShowDate = () => {
+
+    axios.get(`${apiRoot}/dentist/get-date/`, {
       params: {
-        dentistId: dentist,
-        date: event.target.value
+        id: dentist
       },
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).then(response => {
-      setSlots(response.data.data)
-      console.log(slots)
-      setDate(event.target.value)
+
+      setDates(response.data.data)
     })
+
+
+
     // setDates(event.target.value)
     // for (let date of dates) {
     //   if (date.Date === event.target.value.Date) {
@@ -346,55 +380,55 @@ export default function AppointmentTablePage() {
               </div>
             </form>
 
-          <input
-            className="border rounded-md px-3 py-1 text-neutral-500 w-1/5 mr-5"
-            placeholder="filter theo ngày"
-            type="date"
-            value={dateFilter}
-            onChange={(event) => {
-              setDateFilter(event.target.value);
-              console.log(event.target.value);
-            }}
-          />
-        </div>
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <AppointmentTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={appointments.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'patientName', label: 'Name Patient' },
-                  { id: 'patientPhoneNumber', label: 'Phone' },
-                  { id: 'date', label: 'Visit Date' },
-                  { id: 'startAt', label: 'Time Range' },
-                  { id: 'slot', label: 'Slot' },
-                  { id: 'isClinicalExamPaid', label: 'Pre-medical paid' },
-                  { id: 'isFullyPaid', label: 'Fully Paid Service'},
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {appointments
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <AppointmentTableRow
-                      key={row.id}
-                      id = {row.id}
-                      patientName={row.patientName}
-                      patientPhoneNumber={row.patientPhoneNumber}
-                      slotName={row.slotName}
-                      date={row.date}
-                      startAt={row.startAt}
-                      endAt={row.endAt}
-                      status={row.status}
-                      isFullyPaid={row.isFullyPaid}
-                      isClinicalExamPaid = {row.isClinicalExamPaid}
-                      //
+            <input
+              className="border rounded-md px-3 py-1 text-neutral-500 w-1/5 mr-5"
+              placeholder="filter theo ngày"
+              type="date"
+              value={dateFilter}
+              onChange={(event) => {
+                setDateFilter(event.target.value);
+                console.log(event.target.value);
+              }}
+            />
+          </div>
+          <Scrollbar>
+            <TableContainer sx={{ overflow: 'unset' }}>
+              <Table sx={{ minWidth: 800 }}>
+                <AppointmentTableHead
+                  order={order}
+                  orderBy={orderBy}
+                  rowCount={appointments.length}
+                  numSelected={selected.length}
+                  onRequestSort={handleSort}
+                  onSelectAllClick={handleSelectAllClick}
+                  headLabel={[
+                    { id: 'patientName', label: 'Name Patient' },
+                    { id: 'patientPhoneNumber', label: 'Phone' },
+                    { id: 'date', label: 'Visit Date' },
+                    { id: 'startAt', label: 'Time Range' },
+                    { id: 'slot', label: 'Slot' },
+                    { id: 'isClinicalExamPaid', label: 'Pre-medical paid' },
+                    { id: 'isFullyPaid', label: 'Fully Paid Service' },
+                    { id: '' },
+                  ]}
+                />
+                <TableBody>
+                  {appointments
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => (
+                      <AppointmentTableRow
+                        key={row.id}
+                        id={row.id}
+                        patientName={row.patientName}
+                        patientPhoneNumber={row.patientPhoneNumber}
+                        slotName={row.slotName}
+                        date={row.date}
+                        startAt={row.startAt}
+                        endAt={row.endAt}
+                        status={row.status}
+                        isFullyPaid={row.isFullyPaid}
+                        isClinicalExamPaid={row.isClinicalExamPaid}
+                        //
 
                         appointmentServices={row.appointmentServices}
                         dentistTreatmentName={row.dentistTreatmentName}
@@ -450,6 +484,7 @@ export default function AppointmentTablePage() {
                   id="service-select"
                   label="Service"
                   onChange={handleServiceChange}
+                  onOpen={handleShowService}
                 >
                   {services.map((service) => (
                     <MenuItem key={service.id} value={service.id}>{service.name}</MenuItem>
@@ -466,6 +501,8 @@ export default function AppointmentTablePage() {
                   id="dentist-select"
                   label="Dentist"
                   onChange={handleDentistChange}
+                  onOpen={handleShowDentist}
+
                 >
                   {dentists.map((dentist) => (
                     <MenuItem key={dentist.id} value={dentist.id}>{dentist.lastName} {dentist.firstName}</MenuItem>
@@ -479,7 +516,10 @@ export default function AppointmentTablePage() {
                   label="Date"
                   type="date"
                   onChange={handleDateChange}
+                  value={date}
                   InputLabelProps={{ shrink: true }}
+                  onOpen={handleShowDate}
+
                 />
               </FormControl>
             </Box>
@@ -491,6 +531,7 @@ export default function AppointmentTablePage() {
                   id="slot-select"
                   label="Slot"
                   onChange={handleSlotChange}
+                  onOpen={handleShowSlot}
                 >
                   {slots.map((slot) => (
                     <MenuItem key={slot.id} value={slot.id}>{slot.name}</MenuItem>
@@ -523,6 +564,7 @@ export default function AppointmentTablePage() {
                   getOptionLabel={(option) => option.phoneNumber}
                   sx={{ width: 300 }}
                   onChange={handleUserAccountChange}
+                  onOpen={handleShowUserAccount}
                   renderInput={(params) => <TextField {...params} label="Phone" />}
                 />
               </FormControl>
@@ -537,6 +579,8 @@ export default function AppointmentTablePage() {
                   id="patient-select"
                   label="Patient"
                   onChange={handlePatientChange}
+                  onOpen={handleShowProfile}
+
                 >
                   {patients.map((patient) => (
                     <MenuItem key={patient.id} value={patient.id}>{patient.lastName} {patient.firstName}</MenuItem>
